@@ -119,6 +119,8 @@ async Task<string> CallChatGpt(string text)
     var response = await client.PostAsync(options.API_URL, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
     string jsonResponse = await response.Content.ReadAsStringAsync();
 
+    Console.WriteLine(jsonResponse);
+    
     // Extract the generated documentation from the API response
     dynamic responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
     string documentation = responseObject.choices[0].message.content.ToString();
