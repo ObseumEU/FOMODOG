@@ -1,0 +1,24 @@
+name: ci
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.ACCESS_TOKEN }}
+  docker:
+    uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
+    with:
+      image: "smixers/fomodog"
+      dockerfile: ./Dockerfile
+      context: .
+    secrets:
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
