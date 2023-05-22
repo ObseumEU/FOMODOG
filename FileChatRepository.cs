@@ -29,7 +29,7 @@ namespace FomoDog
             // Hope you don't like performance.
             List<string>? messages = new List<string>();
             if (System.IO.File.Exists(_filePath))
-                messages = JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText(_filePath));
+                messages = JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText(_filePath)) ?? new List<string>();
 
             messages.Add($"Napsal {from} v {date}: {messageText}");
 
@@ -45,12 +45,8 @@ namespace FomoDog
 
         public async Task<List<string>> GetAllMessages()
         {
-            if (!File.Exists(_filePath))
-            {
-                File.Create(_filePath);
-                return new List<string>();
-            }
-            return JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(_filePath));
+            var messages =  JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText(_filePath));
+            return messages ?? new List<string>();
         }
     }
 }
