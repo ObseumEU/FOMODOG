@@ -45,7 +45,12 @@ namespace FomoDog
 
         public async Task<List<string>> GetAllMessages()
         {
-            return JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText(_filePath));
+            if (!File.Exists(_filePath))
+            {
+                File.Create(_filePath);
+                return new List<string>();
+            }
+            return JsonConvert.DeserializeObject<List<string>>(File.ReadAllText(_filePath));
         }
     }
 }
