@@ -96,7 +96,7 @@ async Task<string> CallChatGpt(string text)
         new FomoDog.Message()
         {
             role = "user",
-            content = options.PROMPT_PREFIX + text
+            content = options.PROMPT_PREFIX.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
         }
     };
 
