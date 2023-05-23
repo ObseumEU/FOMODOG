@@ -55,7 +55,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         return;
     var chatId = message.Chat.Id;
 
-    if (messageText.ToLower().Contains("mam fomo") || messageText == "42")
+    if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
     {
         var messages = await new FileChatRepository().GetAllMessages();
         try
