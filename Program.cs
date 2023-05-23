@@ -58,12 +58,26 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
     if (messageText.ToLower().Contains("mam fomo") || messageText == "42")
     {
         var messages = await new FileChatRepository().GetAllMessages();
-        var response = await CallChatGpt(string.Join("\n", messages));
-        // Echo received message text
-        Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
-            chatId: chatId,
-            text: response,
-            cancellationToken: cancellationToken);
+        try
+        {
+            var response = await CallChatGpt(string.Join("\n", messages));
+            // Echo received message text
+            Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: response,
+                cancellationToken: cancellationToken);
+        }
+        catch(Exception ex)
+        {
+            //DRY? I dont care.
+            Console.WriteLine(ex.Message);
+            var response = await CallChatGpt(string.Join("\n", messages));
+            // Echo received message text
+            Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: response,
+                cancellationToken: cancellationToken);
+        }
     }
     else
     {
