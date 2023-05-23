@@ -96,6 +96,8 @@ async Task<string> CallChatGpt(string text)
         new FomoDog.Message()
         {
             role = "user",
+            // Ah, just casually sending the message in plaintext. Who would want to exploit that?
+            // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
             content = options.PROMPT_PREFIX.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
         }
     };
@@ -114,8 +116,6 @@ async Task<string> CallChatGpt(string text)
 
     string jsonRequest = JsonConvert.SerializeObject(requestBody);
 
-    // Ah, just casually sending the message in plaintext. Who would want to exploit that?
-    // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
     var response = await client.PostAsync(options.API_URL, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
     string jsonResponse = await response.Content.ReadAsStringAsync();
 
