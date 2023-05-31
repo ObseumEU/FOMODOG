@@ -31,7 +31,7 @@ namespace FomoDog
             if (System.IO.File.Exists(_filePath))
                 messages = JsonConvert.DeserializeObject<List<string>>(System.IO.File.ReadAllText(_filePath)) ?? new List<string>();
 
-            messages.Add($"Napsal {from} v {date}: {messageText}");
+            messages.Add($"Napsal uživatel:{from} v {date}: {messageText}");
 
             // Also, we'll just mercilessly delete the oldest message. Historical data is overrated anyway.
             if (messages.Count > _maxMessagesStoreCount)
