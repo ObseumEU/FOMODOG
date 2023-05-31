@@ -48,42 +48,49 @@ while (true)  // Infinite loop, because who needs an exit strategy, right?
 
 async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
 {
-    if (update.Message is not { } message) // Our bot is very picky about the types of messages it accepts.
-        return;
-    // Only process text messages
-    if (message.Text is not { } messageText)
-        return;
-    var chatId = message.Chat.Id;
-
-    if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
+    try
     {
-        var messages = await new FileChatRepository().GetAllMessages();
-        try
+        if (update.Message is not { } message) // Our bot is very picky about the types of messages it accepts.
+            return;
+        // Only process text messages
+        if (message.Text is not { } messageText)
+            return;
+        var chatId = message.Chat.Id;
+
+        if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
         {
-            var response = await CallChatGpt(string.Join("\n", messages));
-            // Echo received message text
-            Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: response,
-                cancellationToken: cancellationToken);
+            var messages = await new FileChatRepository().GetAllMessages();
+            try
+            {
+                var response = await CallChatGpt(string.Join("\n", messages));
+                // Echo received message text
+                Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: response,
+                    cancellationToken: cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                //DRY? I dont care.
+                Console.WriteLine(ex.Message);
+                var response = await CallChatGpt(string.Join("\n", messages));
+                // Echo received message text
+                Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: response,
+                    cancellationToken: cancellationToken);
+            }
         }
-        catch(Exception ex)
+        else
         {
-            //DRY? I dont care.
-            Console.WriteLine(ex.Message);
-            var response = await CallChatGpt(string.Join("\n", messages));
-            // Echo received message text
-            Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: response,
-                cancellationToken: cancellationToken);
+            var from = message?.From?.LastName;
+            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            await new FileChatRepository().AddMessage(messageText, from, message.Date.ToString());
         }
     }
-    else
+    catch (Exception ex)
     {
-        var from = message?.From?.LastName;
-        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-        await new FileChatRepository().AddMessage(messageText, from, message.Date.ToString());
+        Console.WriteLine(ex.Message);
     }
 }
 
