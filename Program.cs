@@ -14,6 +14,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Configuration;
 
+var respository = new FileChatRepository();
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -21,7 +22,6 @@ IConfigurationRoot configuration = builder.Build();
 var options = configuration.GetSection("Options").Get<Options>();
 
 var botClient = new TelegramBotClient(options.TELEGRAM_KEY);
-
 
 using CancellationTokenSource cts = new(); // So much for running forever.
 
@@ -56,10 +56,11 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         if (message.Text is not { } messageText)
             return;
         var chatId = message.Chat.Id;
-
+        
         if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
         {
-            var messages = await new FileChatRepository().GetAllMessages();
+            await respository.AddMessage(options.USER_PROMPT, message?.From?.LastName, message.Date.ToString());
+            var messages = await respository.GetAllMessages();
             try
             {
                 var response = await CallChatGpt(string.Join("\n", messages));
@@ -85,7 +86,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         {
             var from = message?.From?.LastName;
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-            await new FileChatRepository().AddMessage(messageText, from, message.Date.ToString());
+            await respository.AddMessage(messageText, from, message.Date.ToString());
         }
     }
     catch (Exception ex)
@@ -119,7 +120,7 @@ async Task<string> CallChatGpt(string text)
             role = "user",
             // Ah, just casually sending the message in plaintext. Who would want to exploit that?
             // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-            content = options.PROMPT_PREFIX.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
+            content = options.FOMODOG_DETAILS.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
         }
     };
 
