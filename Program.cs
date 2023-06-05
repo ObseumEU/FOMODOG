@@ -59,7 +59,8 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         
         if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
         {
-            await respository.AddMessage(options.USER_PROMPT, message?.From?.LastName, message.Date.ToString());
+            await respository.AddMessage(options.USER_PROMPT.Replace("{DateTime.Now}", DateTime.Now.ToString()).Replace("{User}", message?.From?.LastName )
+            , message?.From?.LastName, message.Date.ToString());
             var messages = await respository.GetAllMessages();
             try
             {
