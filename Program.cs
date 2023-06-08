@@ -13,6 +13,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Configuration;
+using FomoDog.GPT;
 
 const string BOT_NAME = "FOMODOG";
 
@@ -24,6 +25,7 @@ IConfigurationRoot configuration = builder.Build();
 var options = configuration.GetSection("Options").Get<Options>();
 
 var botClient = new TelegramBotClient(options.TELEGRAM_KEY);
+var gpt = new ChatGPTClient(options.FOMODOG_DETAILS, options.API_KEY, options.API_URL);
 
 using CancellationTokenSource cts = new(); // So much for running forever.
 
@@ -65,7 +67,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
             var messages = await respository.GetAllMessages();
             try
             {
-                var response = await CallChatGpt(string.Join("\n", messages));
+                var response = await gpt.CallChatGpt(string.Join("\n", messages));
                 // Echo received message text
                 Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
                     chatId: chatId,
@@ -77,7 +79,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
             {
                 //DRY? I dont care.
                 Console.WriteLine(ex.Message);
-                var response = await CallChatGpt(string.Join("\n", messages));
+                var response = await gpt.CallChatGpt(string.Join("\n", messages));
                 // Echo received message text
                 Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
                     chatId: chatId,
@@ -121,46 +123,4 @@ Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, 
 
     Console.WriteLine(ErrorMessage);
     return Task.CompletedTask;
-}
-
-async Task<string> CallChatGpt(string text)
-{
-    using HttpClient client = new HttpClient();
-    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", options.API_KEY);
-
-    var messages = new List<FomoDog.Message>
-    {
-        new FomoDog.Message()
-        {
-            role = "user",
-            // Ah, just casually sending the message in plaintext. Who would want to exploit that?
-            // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-            content = options.FOMODOG_DETAILS.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
-        }
-    };
-
-    // Prepare the API request payload
-    var requestBody = new GPTModel()
-    {
-        max_tokens = 200,
-        top_p = 1,
-        presence_penalty = 0,
-        stream = false,
-        temperature = 0.5f,
-        messages = messages.ToArray(),
-        model = "gpt-4"
-    };
-
-    string jsonRequest = JsonConvert.SerializeObject(requestBody);
-
-    var response = await client.PostAsync(options.API_URL, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
-    string jsonResponse = await response.Content.ReadAsStringAsync();
-
-    Console.WriteLine(jsonResponse);
-    
-    // Extract the generated documentation from the API response
-    dynamic responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
-    string documentation = responseObject.choices[0].message.content.ToString();
-
-    return documentation;
 }
