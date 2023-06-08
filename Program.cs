@@ -14,6 +14,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Microsoft.Extensions.Configuration;
 
+const string BOT_NAME = "FOMODOG";
+
 var respository = new FileChatRepository();
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -56,10 +58,10 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         if (message.Text is not { } messageText)
             return;
         var chatId = message.Chat.Id;
-            var now = DateTime.Now.ToString("yyyy MMMM d");
         if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
         {
-            await respository.AddMessage(options.USER_PROMPT.Replace("{DateTime.Now}", now).Replace("{User}", message?.From?.LastName ), message?.From?.LastName, now);
+            var prompt = ReplaceVariables(options.USER_PROMPT, message?.From?.LastName);
+            await respository.AddMessage(prompt, message?.From?.LastName, GetDate());
             var messages = await respository.GetAllMessages();
             try
             {
@@ -69,6 +71,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
                     chatId: chatId,
                     text: response,
                     cancellationToken: cancellationToken);
+                await respository.AddMessage(response, BOT_NAME, GetDate());
             }
             catch (Exception ex)
             {
@@ -86,13 +89,25 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         {
             var from = message?.From?.LastName;
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-            await respository.AddMessage(messageText, from, now);
+            await respository.AddMessage(messageText, from, GetDate());
         }
     }
     catch (Exception ex)
     {
         Console.WriteLine(ex.Message);
     }
+}
+
+string GetDate()
+{
+    return DateTime.Now.ToString("yyyy MMMM d");
+}
+
+string ReplaceVariables(string text, string username)
+{
+    return text
+        .Replace("{DateTime.Now}", GetDate())
+        .Replace("{User}", username);
 }
 
 Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
