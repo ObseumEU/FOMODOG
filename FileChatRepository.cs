@@ -37,7 +37,7 @@ namespace FomoDog
             if (messages.Count > _maxMessagesStoreCount)
                 messages.RemoveAt(0);
 
-            var serialized = JsonConvert.SerializeObject(messages);
+            var serialized = JsonConvert.SerializeObject(messages, Formatting.Indented);
 
             // Look ma, I'm blocking the thread with synchronous file I/O. Ain't that a beauty?
             System.IO.File.WriteAllText(_filePath, serialized);
