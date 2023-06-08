@@ -56,11 +56,10 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         if (message.Text is not { } messageText)
             return;
         var chatId = message.Chat.Id;
-        
+            var now = DateTime.Now.ToString("yyyy MMMM d");
         if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
         {
-            await respository.AddMessage(options.USER_PROMPT.Replace("{DateTime.Now}", DateTime.Now.ToString()).Replace("{User}", message?.From?.LastName )
-            , message?.From?.LastName, message.Date.ToString());
+            await respository.AddMessage(options.USER_PROMPT.Replace("{DateTime.Now}", now).Replace("{User}", message?.From?.LastName ), message?.From?.LastName, now);
             var messages = await respository.GetAllMessages();
             try
             {
@@ -87,7 +86,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
         {
             var from = message?.From?.LastName;
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-            await respository.AddMessage(messageText, from, message.Date.ToString());
+            await respository.AddMessage(messageText, from, now);
         }
     }
     catch (Exception ex)
