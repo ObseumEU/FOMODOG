@@ -100,7 +100,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
 
 string GetDate()
 {
-    return DateTime.Now.ToString("yyyy MMMM d");
+    return DateTime.Now.ToString("yyyy MMMM d hh:mm:ss");
 }
 
 string ReplaceVariables(string text, string username)
