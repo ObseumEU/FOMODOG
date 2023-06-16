@@ -18,19 +18,18 @@ namespace FomoDog
     public class Chatbot
     {
         const string BOT_NAME = "FOMODOG";
-        FileChatRepository respository;
+        FileChatRepository _respository;
         ChatGPTClient gpt;
         private readonly IOptions<Options> _options;
 
-        public Chatbot(IOptions<Options> options)
+        public Chatbot(IOptions<Options> options, FileChatRepository respository)
         {
             _options = options;
+            _respository = respository;
         }
 
         public async Task Run()
         {
-
-            respository = new FileChatRepository();
             var botClient = new TelegramBotClient(_options.Value.TELEGRAM_KEY);
             gpt = new ChatGPTClient(_options.Value.FOMODOG_DETAILS, _options.Value.API_KEY, _options.Value.API_URL);
 
@@ -65,8 +64,8 @@ namespace FomoDog
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
                     var prompt = ReplaceVariables(_options.Value.USER_PROMPT, message?.From?.LastName);
-                    await respository.AddMessage(prompt, message?.From?.LastName, GetDate());
-                    var messages = await respository.GetAllMessages();
+                    await _respository.AddMessage(prompt, message?.From?.LastName, GetDate());
+                    var messages = await _respository.GetAllMessages();
                     try
                     {
                         var response = await gpt.CallChatGpt(string.Join("\n", messages));
@@ -75,7 +74,7 @@ namespace FomoDog
                             chatId: chatId,
                             text: response,
                             cancellationToken: cancellationToken);
-                        await respository.AddMessage(response, BOT_NAME, GetDate());
+                        await _respository.AddMessage(response, BOT_NAME, GetDate());
                     }
                     catch (Exception ex)
                     {
@@ -93,7 +92,7 @@ namespace FomoDog
                 {
                     var from = message?.From?.LastName;
                     Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-                    await respository.AddMessage(messageText, from, GetDate());
+                    await _respository.AddMessage(messageText, from, GetDate());
                 }
             }
             catch (Exception ex)

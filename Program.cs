@@ -17,6 +17,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     {
         services.Configure<Options>(config.GetSection("Options"));
         services.AddSingleton<Chatbot>();
+        services.AddSingleton<FileChatRepository>();
     })
     .Build();
 
