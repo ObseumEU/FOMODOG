@@ -38,13 +38,12 @@ namespace FomoDog.GPT
             // Prepare the API request payload
             var requestBody = new GPTModel()
             {
-                max_tokens = 200,
+                max_tokens = 500,
                 top_p = 1,
                 presence_penalty = 0,
                 stream = false,
                 temperature = 0.5f,
                 messages = messages.ToArray(),
-                max_tokens = 1000,
                 model = "gpt-4"
             };
 
