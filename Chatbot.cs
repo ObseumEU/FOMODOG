@@ -1,15 +1,18 @@
-﻿using FomoDog;
-using Newtonsoft.Json;
-using System.Text;
+﻿/*
+Hello dear code explorer,
+Every line here is unique, special, and dreadfully inefficient. They say "Good things take time", so if time inversely correlates 
+with quality... Well, you can draw your own conclusions.  
+So, in conclusion, let me apologize:
+*/
+
+using FomoDog.GPT;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Microsoft.Extensions.Configuration;
-using FomoDog.GPT;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FomoDog
 {
@@ -18,7 +21,12 @@ namespace FomoDog
         const string BOT_NAME = "FOMODOG";
         FileChatRepository respository;
         ChatGPTClient gpt;
-        Options options;
+        private readonly IOptions<Options> _options;
+
+        public Chatbot(IOptions<Options> options)
+        {
+            _options = options;
+        }
 
         public async Task Run()
         {
@@ -27,11 +35,8 @@ namespace FomoDog
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            IConfigurationRoot configuration = builder.Build();
-            options = configuration.GetSection("Options").Get<Options>();
-
-            var botClient = new TelegramBotClient(options.TELEGRAM_KEY);
-            gpt = new ChatGPTClient(options.FOMODOG_DETAILS, options.API_KEY, options.API_URL);
+            var botClient = new TelegramBotClient(_options.Value.TELEGRAM_KEY);
+            gpt = new ChatGPTClient(_options.Value.FOMODOG_DETAILS, _options.Value.API_KEY, _options.Value.API_URL);
 
             using CancellationTokenSource cts = new(); // So much for running forever.
 
@@ -63,7 +68,7 @@ namespace FomoDog
                 var chatId = message.Chat.Id;
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
-                    var prompt = ReplaceVariables(options.USER_PROMPT, message?.From?.LastName);
+                    var prompt = ReplaceVariables(_options.Value.USER_PROMPT, message?.From?.LastName);
                     await respository.AddMessage(prompt, message?.From?.LastName, GetDate());
                     var messages = await respository.GetAllMessages();
                     try

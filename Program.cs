@@ -1,30 +1,24 @@
-﻿/*
-Hello dear code explorer,
-Every line here is unique, special, and dreadfully inefficient. They say "Good things take time", so if time inversely correlates 
-with quality... Well, you can draw your own conclusions.  
-So, in conclusion, let me apologize:
-*/
-using FomoDog;
-using Newtonsoft.Json;
-using System.Text;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+﻿using FomoDog;
 using Microsoft.Extensions.Configuration;
-using FomoDog.GPT;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+
+
+var config = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddEnvironmentVariables()
+    .Build();
 
 
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
+        services.Configure<Options>(config.GetSection("Options"));
         services.AddSingleton<Chatbot>();
     })
     .Build();
-
 
 using IServiceScope serviceScope = host.Services.CreateScope();
 IServiceProvider provider = serviceScope.ServiceProvider;
