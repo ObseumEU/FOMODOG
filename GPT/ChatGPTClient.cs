@@ -44,6 +44,7 @@ namespace FomoDog.GPT
                 stream = false,
                 temperature = 0.5f,
                 messages = messages.ToArray(),
+                max_tokens = 1000,
                 model = "gpt-4"
             };
 
