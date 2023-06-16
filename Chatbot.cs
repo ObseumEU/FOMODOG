@@ -6,7 +6,6 @@ So, in conclusion, let me apologize:
 */
 
 using FomoDog.GPT;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -32,9 +31,6 @@ namespace FomoDog
         {
 
             respository = new FileChatRepository();
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             var botClient = new TelegramBotClient(_options.Value.TELEGRAM_KEY);
             gpt = new ChatGPTClient(_options.Value.FOMODOG_DETAILS, _options.Value.API_KEY, _options.Value.API_URL);
 
