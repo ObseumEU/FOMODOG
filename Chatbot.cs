@@ -64,7 +64,7 @@ namespace FomoDog
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
                     var prompt = ReplaceVariables(_options.Value.USER_PROMPT, message?.From?.LastName);
-                    await _respository.AddMessage(prompt, message?.From?.LastName, GetDate());
+                    await _respository.AddMessage(prompt, $"{message?.From?.FirstName} {message?.From?.LastName}", GetDate());
                     var messages = await _respository.GetAllMessages();
                     try
                     {
