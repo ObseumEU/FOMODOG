@@ -15,6 +15,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bots.Types;
+using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog
 {
@@ -129,6 +130,14 @@ namespace FomoDog
 
                     await _respository.AddMessage(messageText, from, GetDate());
                 }
+            }
+            catch (ExceededCurrentQuotaException ex)
+            {
+                Console.WriteLine("ExceededCurrentQuotaException");
+                await botClient.SendTextMessageAsync(
+                           chatId: update.Message.Chat.Id,
+                           text: "David neplatí učty vyspělé AI. Důrazně doporučuji aby to zaplatil.",
+                           cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {

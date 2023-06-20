@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Data;
 using System.Text;
 
 namespace FomoDog.GPT
@@ -49,9 +50,18 @@ namespace FomoDog.GPT
 
             // Extract the generated documentation from the API response
             dynamic responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
+
+            if (jsonResponse.Contains("exceeded your current quota"))
+            {
+                throw new ExceededCurrentQuotaException();
+            }
             string documentation = responseObject.choices[0].message.content.ToString();
 
             return documentation;
+        }
+
+        public class ExceededCurrentQuotaException : Exception
+        {
         }
     }
 }

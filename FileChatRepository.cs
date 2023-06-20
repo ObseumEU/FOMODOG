@@ -17,7 +17,7 @@ namespace FomoDog
         private int _maxMessagesStoreCount;
         private string _filePath;
 
-        public FileChatRepository(string filePath = "./messages.txt", int maxMessagesStoreCount = 50)
+        public FileChatRepository(string filePath = "./messages.txt", int maxMessagesStoreCount = 30)
         {
             _maxMessagesStoreCount = maxMessagesStoreCount;
             _filePath = filePath;
