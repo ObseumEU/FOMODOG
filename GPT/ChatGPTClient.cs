@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace FomoDog.GPT
 {
     public class ChatGPTClient
     {
-        ChatGPTClientOptions _options;
-        public ChatGPTClient(ChatGPTClientOptions options)
+        IOptions<ChatGPTClientOptions> _options;
+        public ChatGPTClient(IOptions<ChatGPTClientOptions> options)
         {
             _options = options;
         }
@@ -14,7 +15,7 @@ namespace FomoDog.GPT
         public async Task<string> CallChatGpt(string text)
         {
             using HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _options.ApiKey);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _options.Value.ApiKey);
 
             var messages = new List<Message>
             {
@@ -23,7 +24,7 @@ namespace FomoDog.GPT
                     role = "user",
                     // Ah, just casually sending the message in plaintext. Who would want to exploit that?
                     // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-                    content =_options.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
+                    content =_options.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
                 }
             };
 
@@ -41,7 +42,7 @@ namespace FomoDog.GPT
 
             string jsonRequest = JsonConvert.SerializeObject(requestBody);
 
-            var response = await client.PostAsync(_options.ApiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(_options.Value.ApiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
             Console.WriteLine(jsonResponse);
