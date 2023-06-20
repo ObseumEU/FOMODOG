@@ -70,7 +70,7 @@ namespace FomoDog
                     {
                         var response = await gpt.CallChatGpt(string.Join("\n", messages));
                         // Echo received message text
-                        Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                        await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
                             cancellationToken: cancellationToken);
@@ -82,7 +82,7 @@ namespace FomoDog
                         Console.WriteLine(ex.Message);
                         var response = await gpt.CallChatGpt(string.Join("\n", messages));
                         // Echo received message text
-                        Telegram.Bot.Types.Message sentMessage = await botClient.SendTextMessageAsync(
+                        await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
                             cancellationToken: cancellationToken);
