@@ -79,10 +79,11 @@ namespace FomoDog
                 if (message.Text is not { } messageText)
                     return;
                 var chatId = message.Chat.Id;
+                var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
-                    var prompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt, $"{message?.From?.FirstName} {message?.From?.LastName}");
-                    await _respository.AddMessage(prompt, $"{message?.From?.FirstName} {message?.From?.LastName}", GetDate());
+                    var prompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt, from);
+                    await _respository.AddMessage(prompt, from, GetDate());
                     var messages = await _respository.GetAllMessages();
                     try
                     {
@@ -109,7 +110,6 @@ namespace FomoDog
                 }
                 else
                 {
-                    var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
                     Console.WriteLine($"Received from telefram '{JsonConvert.SerializeObject(message)}");
                     var links = ExtractHttpsLinks(messageText);
                     if (links?.Count() > 0)
