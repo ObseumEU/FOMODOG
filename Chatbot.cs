@@ -134,7 +134,7 @@ namespace FomoDog
             {
                 Console.WriteLine(ex.Message);
                 await botClient.SendTextMessageAsync(
-                           chatId: message.Chat.Id,
+                           chatId: update.Message.Chat.Id,
                            text: "Ups, něco se pokazilo.",
                            cancellationToken: cancellationToken);
             }
