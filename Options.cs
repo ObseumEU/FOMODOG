@@ -1,6 +1,11 @@
 ﻿
-public class Options
+public class ChatbotOptions
 {
-    public string TELEGRAM_KEY { get; set; }
-    public string USER_PROMPT { get; set; }
+    public string ChatDetails { get; set; }
+    public string UserPrompt { get; set; }
+}
+
+public class TelegramOptions
+{
+    public string Key { get; set; }
 }

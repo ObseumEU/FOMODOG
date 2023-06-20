@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-
-
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false)
@@ -16,7 +14,8 @@ var config = new ConfigurationBuilder()
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.Configure<Options>(config.GetSection("Options"));
+        services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
+        services.Configure<TelegramOptions>(config.GetSection("Telegram"));
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddSingleton<ChatGPTClient>();
         services.AddSingleton<Chatbot>();
