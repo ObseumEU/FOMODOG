@@ -10,7 +10,6 @@ var config = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {

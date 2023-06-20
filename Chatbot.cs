@@ -8,6 +8,7 @@ So, in conclusion, let me apologize:
 using FomoDog.GPT;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -54,6 +55,20 @@ namespace FomoDog
             Console.WriteLine($"Start listening for @{me.Username}");
         }
 
+        public static string[] ExtractHttpsLinks(string inputText)
+        {
+            const string pattern = @"https://\S+";
+            var matches = Regex.Matches(inputText, pattern);
+            var links = new string[matches.Count];
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                links[i] = matches[i].Value;
+            }
+
+            return links;
+        }
+
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             try
@@ -73,7 +88,7 @@ namespace FomoDog
                     {
                         var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
                         // Echo received message text
-                        
+
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
@@ -94,8 +109,18 @@ namespace FomoDog
                 }
                 else
                 {
-                    var from = message?.From?.LastName;
+                    var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
                     Console.WriteLine($"Received from telefram '{JsonConvert.SerializeObject(message)}");
+                    var links = ExtractHttpsLinks(messageText);
+                    if (links?.Count() > 0)
+                    {
+                        foreach (var link in links)
+                        {
+                            var metadata = new MetadataDownloader().DownloadMetadata(link);
+                            messageText = messageText.Replace(link, $"{link}({metadata.Title} {metadata.Description})");
+                        }
+                    }
+
                     await _respository.AddMessage(messageText, from, GetDate());
                 }
             }
