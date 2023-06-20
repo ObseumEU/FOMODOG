@@ -15,10 +15,13 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
+        services.AddSingleton<Chatbot>();
+
         services.Configure<TelegramOptions>(config.GetSection("Telegram"));
+        
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddSingleton<ChatGPTClient>();
-        services.AddSingleton<Chatbot>();
+        
         services.AddSingleton<FileChatRepository>();
     })
     .Build();

@@ -24,7 +24,7 @@ namespace FomoDog.GPT
                     role = "user",
                     // Ah, just casually sending the message in plaintext. Who would want to exploit that?
                     // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-                    content =_options.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
+                    content = text
                 }
             };
 

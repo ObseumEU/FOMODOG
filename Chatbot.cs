@@ -21,18 +21,20 @@ namespace FomoDog
         const string BOT_NAME = "FOMODOG";
         FileChatRepository _respository;
         ChatGPTClient _gpt;
-        private readonly IOptions<Options> _options;
+        IOptions<ChatbotOptions> _chatbotOptions;
+        IOptions<TelegramOptions> _telegramOptions;
 
-        public Chatbot(IOptions<Options> options, FileChatRepository respository, ChatGPTClient gpt)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, FileChatRepository respository, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions)
         {
-            _options = options;
+            _chatbotOptions = chatbotOptions;
+            _telegramOptions = telegramOptions;
             _respository = respository;
             _gpt = gpt;
         }
 
         public async Task Run()
         {
-            var botClient = new TelegramBotClient(_options.Value.TELEGRAM_KEY);
+            var botClient = new TelegramBotClient(_telegramOptions.Value.Key);
 
             using CancellationTokenSource cts = new(); // So much for running forever.
 
@@ -64,12 +66,12 @@ namespace FomoDog
                 var chatId = message.Chat.Id;
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
-                    var prompt = ReplaceVariables(_options.Value.USER_PROMPT, message?.From?.LastName);
+                    var prompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt, $"{message?.From?.FirstName} {message?.From?.LastName}");
                     await _respository.AddMessage(prompt, $"{message?.From?.FirstName} {message?.From?.LastName}", GetDate());
                     var messages = await _respository.GetAllMessages();
                     try
                     {
-                        var response = await _gpt.CallChatGpt(string.Join("\n", messages));
+                        var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
                         // Echo received message text
                         
                         await botClient.SendTextMessageAsync(
@@ -82,7 +84,7 @@ namespace FomoDog
                     {
                         //DRY? I dont care.
                         Console.WriteLine(ex.Message);
-                        var response = await _gpt.CallChatGpt(string.Join("\n", messages));
+                        var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
                         // Echo received message text
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
