@@ -43,7 +43,7 @@ namespace FomoDog
             // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
             ReceiverOptions receiverOptions = new()
             {
-                AllowedUpdates = Array.Empty<UpdateType>() // receive all update types
+                AllowedUpdates = Array.Empty<Telegram.Bot.Types.Enums.UpdateType>() // receive all update types
             };
             botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -70,7 +70,7 @@ namespace FomoDog
             return links;
         }
 
-        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Telegram.Bot.Types.Update update, CancellationToken cancellationToken)
         {
             try
             {
