@@ -1,4 +1,5 @@
 ﻿using FomoDog;
+using FomoDog.GPT;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.Configure<Options>(config.GetSection("Options"));
+        services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
+        services.AddSingleton<ChatGPTClient>();
         services.AddSingleton<Chatbot>();
         services.AddSingleton<FileChatRepository>();
     })

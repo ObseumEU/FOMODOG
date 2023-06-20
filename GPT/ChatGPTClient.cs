@@ -5,29 +5,25 @@ namespace FomoDog.GPT
 {
     public class ChatGPTClient
     {
-        string _chatDetails;
-        string _apiKey;
-        string _apiUrl;
-        public ChatGPTClient(string chatDetails, string apiKey, string apiUrl)
+        ChatGPTClientOptions _options;
+        public ChatGPTClient(ChatGPTClientOptions options)
         {
-            _chatDetails = chatDetails;
-            _apiKey = apiKey;
-            _apiUrl = apiUrl;
+            _options = options;
         }
 
         public async Task<string> CallChatGpt(string text)
         {
             using HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _apiKey);
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _options.ApiKey);
 
-            var messages = new List<FomoDog.Message>
+            var messages = new List<Message>
             {
                 new FomoDog.Message()
                 {
                     role = "user",
                     // Ah, just casually sending the message in plaintext. Who would want to exploit that?
                     // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-                    content =_chatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
+                    content =_options.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + text
                 }
             };
 
@@ -45,7 +41,7 @@ namespace FomoDog.GPT
 
             string jsonRequest = JsonConvert.SerializeObject(requestBody);
 
-            var response = await client.PostAsync(_apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+            var response = await client.PostAsync(_options.ApiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
             string jsonResponse = await response.Content.ReadAsStringAsync();
 
             Console.WriteLine(jsonResponse);

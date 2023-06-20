@@ -19,19 +19,19 @@ namespace FomoDog
     {
         const string BOT_NAME = "FOMODOG";
         FileChatRepository _respository;
-        ChatGPTClient gpt;
+        ChatGPTClient _gpt;
         private readonly IOptions<Options> _options;
 
-        public Chatbot(IOptions<Options> options, FileChatRepository respository)
+        public Chatbot(IOptions<Options> options, FileChatRepository respository, ChatGPTClient gpt)
         {
             _options = options;
             _respository = respository;
+            _gpt = gpt;
         }
 
         public async Task Run()
         {
             var botClient = new TelegramBotClient(_options.Value.TELEGRAM_KEY);
-            gpt = new ChatGPTClient(_options.Value.FOMODOG_DETAILS, _options.Value.API_KEY, _options.Value.API_URL);
 
             using CancellationTokenSource cts = new(); // So much for running forever.
 
@@ -68,7 +68,7 @@ namespace FomoDog
                     var messages = await _respository.GetAllMessages();
                     try
                     {
-                        var response = await gpt.CallChatGpt(string.Join("\n", messages));
+                        var response = await _gpt.CallChatGpt(string.Join("\n", messages));
                         // Echo received message text
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
@@ -80,7 +80,7 @@ namespace FomoDog
                     {
                         //DRY? I dont care.
                         Console.WriteLine(ex.Message);
-                        var response = await gpt.CallChatGpt(string.Join("\n", messages));
+                        var response = await _gpt.CallChatGpt(string.Join("\n", messages));
                         // Echo received message text
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
