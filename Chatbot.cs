@@ -133,6 +133,10 @@ namespace FomoDog
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                await botClient.SendTextMessageAsync(
+                           chatId: message.Chat.Id,
+                           text: "Ups, něco se pokazilo.",
+                           cancellationToken: cancellationToken);
             }
         }
 
