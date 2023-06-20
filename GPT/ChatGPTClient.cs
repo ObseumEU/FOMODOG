@@ -35,7 +35,7 @@ namespace FomoDog.GPT
                 top_p = 1,
                 presence_penalty = 0,
                 stream = false,
-                temperature = 0.5f,
+                temperature = 1f,
                 messages = messages.ToArray(),
                 model = "gpt-4"
             };

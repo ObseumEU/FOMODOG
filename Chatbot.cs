@@ -14,6 +14,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bots.Types;
 
 namespace FomoDog
 {
@@ -82,6 +83,11 @@ namespace FomoDog
                 var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
                 if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                 {
+                    await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                            text: "Moment, jen si projdu chat.",
+                            cancellationToken: cancellationToken);
+
                     var prompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt, from);
                     await _respository.AddMessage(prompt, from, GetDate());
                     var messages = await _respository.GetAllMessages();
