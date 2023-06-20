@@ -117,7 +117,7 @@ namespace FomoDog
                         foreach (var link in links)
                         {
                             var metadata = new MetadataDownloader().DownloadMetadata(link);
-                            messageText = messageText.Replace(link, $"{link}({metadata.Title} {metadata.Description})");
+                            messageText = messageText.Replace(link, $"{link}({metadata.Description})");
                         }
                     }
 
