@@ -7,6 +7,7 @@ So, in conclusion, let me apologize:
 
 using FomoDog.GPT;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -70,6 +71,7 @@ namespace FomoDog
                     {
                         var response = await _gpt.CallChatGpt(string.Join("\n", messages));
                         // Echo received message text
+                        
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
@@ -91,7 +93,7 @@ namespace FomoDog
                 else
                 {
                     var from = message?.From?.LastName;
-                    Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+                    Console.WriteLine($"Received from telefram '{JsonConvert.SerializeObject(message)}");
                     await _respository.AddMessage(messageText, from, GetDate());
                 }
             }
