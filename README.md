@@ -1,4 +1,4 @@
-#Patreons
+# Patreons
 Daniel Brvnišťan, David Roško
 
 # FOMODog: Your Ultimate FOMO Buster! :dog:
