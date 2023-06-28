@@ -1,3 +1,6 @@
+#Patreons
+Daniel Brvnišťan, David Roško
+
 # FOMODog: Your Ultimate FOMO Buster! :dog:
 
 Does the fear of missing out (FOMO) on exciting events shared in a Telegram chat give you sleepless nights? Or make you compulsively check your phone every few minutes? Well, say goodbye to your FOMO because FOMODog is here to rescue you! 
