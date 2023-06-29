@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Telegram.Bot" Version="18.0.0" />
     <PackageReference Include="Telegram.Bots" Version="5.9.0" />
+	<PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
   </ItemGroup>
 
   <ItemGroup>

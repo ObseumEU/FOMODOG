@@ -3,6 +3,7 @@ using FomoDog.GPT;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FeatureManagement;
 
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -13,6 +14,7 @@ var config = new ConfigurationBuilder()
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
+        services.AddFeatureManagement(config);
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
         services.AddSingleton<Chatbot>();
 
