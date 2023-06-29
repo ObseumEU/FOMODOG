@@ -1,5 +1,5 @@
 # Use the official Microsoft .NET Core SDK image as the build image
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 # Set the working directory within the build container
 WORKDIR /src
@@ -21,7 +21,7 @@ RUN dotnet build --configuration Release --no-restore -o /app/build
 RUN dotnet publish --configuration Release -o /app/publish /p:UseAppHost=false
 
 # Use the official Microsoft .NET Core runtime image as the base image for the final stage
-FROM mcr.microsoft.com/dotnet/runtime:6.0
+FROM mcr.microsoft.com/dotnet/runtime:7.0
 
 # Set the working directory within the container
 WORKDIR /app
