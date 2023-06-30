@@ -1,3 +1,10 @@
+![FOMODOG](https://socialify.git.ci/BooAIPublic/FOMODOG/image?forks=1&issues=1&language=1&name=1&pulls=1&stargazers=1&theme=Light)
+[![Continous Integration](https://github.com/BooAIPublic/FOMODOG/actions/workflows/docker-build-and-push.yml/badge.svg)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/docker-build-and-push.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c5c679d85bf84f05bee46dad020c25b1)](https://app.codacy.com/gh/BooAIPublic/FOMODOG/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+
+
+
 # Patreons
 Daniel Brvnišťan, David Roško
 
