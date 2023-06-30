@@ -20,10 +20,10 @@ namespace FomoDog
     public class Chatbot
     {
         const string BOT_NAME = "FOMODOG";
-        ChatGPTClient _gpt;
-        IOptions<ChatbotOptions> _chatbotOptions;
-        IOptions<TelegramOptions> _telegramOptions;
-        ChatRepository _chatRepository;
+        readonly ChatGPTClient _gpt;
+        readonly IOptions<ChatbotOptions> _chatbotOptions;
+        readonly IOptions<TelegramOptions> _telegramOptions;
+        readonly ChatRepository _chatRepository;
 
         public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ChatRepository chatRepository)
         {
