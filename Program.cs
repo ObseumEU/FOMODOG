@@ -7,9 +7,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using System.IO.Abstractions;
 
+IHostEnvironment env = Host.CreateDefaultBuilder(args).Build().Services.GetRequiredService<IHostEnvironment>();
+
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile("appsettings.json", optional: false, true)
+    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, true)
     .AddEnvironmentVariables()
     .Build();
 
@@ -23,12 +26,12 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<ChatRepository>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
-        services.AddSingleton<Chatbot>();
+        services.AddScoped<Chatbot>();
 
         services.Configure<TelegramOptions>(config.GetSection("Telegram"));
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
-        services.AddSingleton<ChatGPTClient>();
+        services.AddScoped<ChatGPTClient>();
     })
     .Build();
 
