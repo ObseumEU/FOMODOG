@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Data;
 using System.Text;
 
 namespace FomoDog.GPT

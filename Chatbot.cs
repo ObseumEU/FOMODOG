@@ -5,6 +5,7 @@ with quality... Well, you can draw your own conclusions.
 So, in conclusion, let me apologize:
 */
 
+using FomoDog.Context;
 using FomoDog.GPT;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -12,9 +13,6 @@ using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bots.Types;
 using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog
@@ -22,17 +20,17 @@ namespace FomoDog
     public class Chatbot
     {
         const string BOT_NAME = "FOMODOG";
-        FileChatRepository _respository;
         ChatGPTClient _gpt;
         IOptions<ChatbotOptions> _chatbotOptions;
         IOptions<TelegramOptions> _telegramOptions;
+        ChatRepository _chatRepository;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, FileChatRepository respository, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ChatRepository chatRepository)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
-            _respository = respository;
             _gpt = gpt;
+            _chatRepository = chatRepository;
         }
 
         public async Task Run()
@@ -89,19 +87,36 @@ namespace FomoDog
                             text: "Moment, jen si projdu chat.",
                             cancellationToken: cancellationToken);
 
-                    var prompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt, from);
-                    await _respository.AddMessage(prompt, from, GetDate());
-                    var messages = await _respository.GetAllMessages();
+                    var userPrompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt);
+                    await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                    {
+                        ChatId = message.Chat.Id.ToString(),
+                        Content = userPrompt,
+                        Date = message.Date,
+                        From = message.From.FirstName + message.From.LastName,
+                        RawMessage = JsonConvert.SerializeObject(message)
+                    });
+                    var messages = await _chatRepository.GetAllActivity(message.Chat.Id.ToString());
+
                     try
                     {
-                        var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
+                        var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
+                        var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
+                        var response = await _gpt.CallChatGpt(gptPrompt);
                         // Echo received message text
 
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
                             cancellationToken: cancellationToken);
-                        await _respository.AddMessage(response, BOT_NAME, GetDate());
+                        await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                        {
+                            ChatId = message.Chat.Id.ToString(),
+                            Content = response,
+                            Date = message.Date,
+                            From = BOT_NAME,
+                            RawMessage = JsonConvert.SerializeObject(message)
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -128,7 +143,14 @@ namespace FomoDog
                         }
                     }
 
-                    await _respository.AddMessage(messageText, from, GetDate());
+                    await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                    {
+                        ChatId = message.Chat.Id.ToString(),
+                        Content = messageText,
+                        Date = message.Date,
+                        From = from,
+                        RawMessage = JsonConvert.SerializeObject(message)
+                    });
                 }
             }
             catch (ExceededCurrentQuotaException ex)
@@ -149,16 +171,17 @@ namespace FomoDog
             }
         }
 
-        string GetDate()
+        string GetDateString(DateTime? date = null)
         {
-            return DateTime.Now.ToString("yyyy MMMM d hh:mm:ss");
+            if (date == null)
+                date = DateTime.Now;
+            return date.Value.ToString("yyyy MMMM d hh:mm:ss");
         }
 
-        string ReplaceVariables(string text, string username)
+        string ReplaceVariables(string text)
         {
             return text
-                .Replace("{DateTime.Now}", GetDate())
-                .Replace("{User}", username);
+                .Replace("{DateTime.Now}", GetDateString());
         }
 
         Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
