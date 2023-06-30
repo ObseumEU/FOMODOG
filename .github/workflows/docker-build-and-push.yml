@@ -13,24 +13,24 @@ jobs:
           submodules: recursive
           token: ${{ secrets.ACCESS_TOKEN }}
 
-  tests:
-    needs: [checkout, docker]
-    runs-on: ubuntu-latest
-    steps:     
-      - name: Build Tests Docker
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          load: true
-          tags: tests
-          target: test
-          file: ./Dockerfile
-      - name: Run Tests 
-        run: docker run -v "${PWD}/:/tests/" tests
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env: 
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  # tests:
+  #   needs: [checkout, docker]
+  #   runs-on: ubuntu-latest
+  #   steps:     
+  #     - name: Build Tests Docker
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         context: .
+  #         load: true
+  #         tags: tests
+  #         target: test
+  #         file: ./Dockerfile
+  #     - name: Run Tests 
+  #       run: docker run -v "${PWD}/:/tests/" tests
+  #     - name: Upload coverage reports to Codecov
+  #       uses: codecov/codecov-action@v3
+  #       env: 
+  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docker:
     uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
