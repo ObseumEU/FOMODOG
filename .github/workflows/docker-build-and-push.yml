@@ -13,7 +13,7 @@ jobs:
           submodules: recursive
           token: ${{ secrets.ACCESS_TOKEN }}
 
-  codecov:
+  tests:
     needs: [checkout, docker]
     runs-on: ubuntu-latest
     steps:     
