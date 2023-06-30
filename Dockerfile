@@ -1,4 +1,8 @@
 # Use the official Microsoft .NET Core SDK image as the build image
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS test
+WORKDIR /tests
+ENTRYPOINT ["dotnet", "test"]
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 # Set the working directory within the build container
@@ -6,9 +10,6 @@ WORKDIR /src
 
 # Copy your source code to the build container
 COPY . ./
-
-#WTF i dont know why this is needed but it works
-
 
 WORKDIR /src
 # Restore NuGet packages
