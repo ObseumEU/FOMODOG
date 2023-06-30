@@ -1,11 +1,11 @@
 ﻿
 public class ChatbotOptions
 {
-    public string ChatDetails { get; set; }
-    public string UserPrompt { get; set; }
+    public readonly string ChatDetails;
+    public readonly string UserPrompt;
 }
 
 public class TelegramOptions
 {
-    public string Key { get; set; }
+    public readonly string Key;
 }
