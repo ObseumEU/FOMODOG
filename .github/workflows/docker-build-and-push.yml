@@ -22,3 +22,13 @@ jobs:
       ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+
+  codecov:
+    needs: [checkout, docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env: 
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          
