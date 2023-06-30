@@ -17,8 +17,13 @@ jobs:
     needs: [checkout, docker]
     runs-on: ubuntu-latest
     steps:     
-      - name: Build Tests 
-        run: docker build . -t tests --target test
+      - name: Build Tests Docker
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: tests
+          target: test
       - name: Run Tests 
         run: docker run -v "${PWD}/:/tests/" tests
       - name: Upload coverage reports to Codecov
