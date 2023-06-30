@@ -2,7 +2,7 @@
 {
     public class ChatRepositoryOption
     {
-        public readonly string RepositoryPath = "./data.txt";
-        public readonly int MaxMessagesStoreCount = 20;
+        public string RepositoryPath { get; set; } = "./data.txt";
+        public int MaxMessagesStoreCount { get; set; } = 20;
     }
 }
