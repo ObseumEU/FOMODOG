@@ -24,6 +24,7 @@ jobs:
           load: true
           tags: tests
           target: test
+          file: ./Dockerfile
       - name: Run Tests 
         run: docker run -v "${PWD}/:/tests/" tests
       - name: Upload coverage reports to Codecov
