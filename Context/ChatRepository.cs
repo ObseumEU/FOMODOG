@@ -22,8 +22,8 @@ namespace FomoDog.Context
 
     public class ChatRepository : IChatRepository
     {
-        IFileSystem _fileSystem;
-        IOptions<ChatRepositoryOption> _options;
+        readonly IFileSystem _fileSystem;
+        readonly IOptions<ChatRepositoryOption> _options;
         public ChatRepository(IFileSystem fileSystem, IOptions<ChatRepositoryOption> options)
         {
             _fileSystem = fileSystem;

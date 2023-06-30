@@ -1,9 +1,9 @@
 
+using FomoDog.Context;
+using FomoDog.Context.Models;
 using Microsoft.Extensions.Options;
 using System.IO.Abstractions.TestingHelpers;
 using Xunit;
-using FomoDog.Context;
-using FomoDog.Context.Models;
 
 namespace FomoDog.Tests
 {
