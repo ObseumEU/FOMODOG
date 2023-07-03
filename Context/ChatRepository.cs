@@ -53,7 +53,7 @@ namespace FomoDog.Context
 
             var serialized = _fileSystem.File.ReadAllText(_options.Value.RepositoryPath);
             var activities = JsonConvert.DeserializeObject<List<ChatActivity>>(serialized);
-            return activities;
+            return activities.Where(a => a.ChatId == chatId).ToList();
         }
 
         public async Task TrimActivity(string chatId, int maxMessagesStoreCount)
