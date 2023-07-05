@@ -40,16 +40,17 @@ namespace FomoDog.Context
                 await TrimActivity(activity.ChatId, _options.Value.MaxMessagesStoreCount);
         }
 
-        private async Task Save(List<ChatActivity> activities)
+        private Task Save(List<ChatActivity> activities)
         {
             var serialized = JsonConvert.SerializeObject(activities, Formatting.Indented);
             _fileSystem.File.WriteAllText(_options.Value.RepositoryPath, serialized);
+            return Task.CompletedTask;
         }
 
         public async Task<List<ChatActivity>> GetAllActivity(string chatId)
         {
             if (!_fileSystem.File.Exists(_options.Value.RepositoryPath))
-                _fileSystem.File.WriteAllText(_options.Value.RepositoryPath, "[]");
+                await _fileSystem.File.WriteAllTextAsync(_options.Value.RepositoryPath, "[]");
 
             var serialized = _fileSystem.File.ReadAllText(_options.Value.RepositoryPath);
             var activities = JsonConvert.DeserializeObject<List<ChatActivity>>(serialized);

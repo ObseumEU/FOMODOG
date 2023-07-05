@@ -6,7 +6,7 @@ namespace FomoDog.GPT
 {
     public class ChatGPTClient
     {
-        IOptions<ChatGPTClientOptions> _options;
+        readonly IOptions<ChatGPTClientOptions> _options;
         public ChatGPTClient(IOptions<ChatGPTClientOptions> options)
         {
             _options = options;

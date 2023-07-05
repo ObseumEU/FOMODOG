@@ -31,7 +31,7 @@ namespace FomoDog.Tests
             var activity = CreateChatActivity("1", "Olda Master", "Hello", DateTime.UtcNow);
 
             Context.IChatRepository repository = new ChatRepository(fileSystem.FileSystem, moqOptions);
-            repository.AddActivity(activity);
+            await repository.AddActivity(activity);
             var activities = await repository.GetAllActivity("1");
 
             Assert.Single(activities);
@@ -56,7 +56,7 @@ namespace FomoDog.Tests
             IOptions<ChatRepositoryOption> moqOptions;
             ArrageDependencies(out fileSystem, out moqOptions);
             Context.IChatRepository repository = new ChatRepository(fileSystem.FileSystem, moqOptions);
-            ChatActivity checkActivity = null;
+            ChatActivity? checkActivity = null!;
             for (int i = 0; i < 30; i++)
             {
                 var newActivity = CreateChatActivity("1", Guid.NewGuid().ToString(), $"{i}", DateTime.UtcNow.AddSeconds(+i));

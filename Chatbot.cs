@@ -138,7 +138,7 @@ namespace FomoDog
                     {
                         foreach (var link in links)
                         {
-                            var metadata = new MetadataDownloader().DownloadMetadata(link);
+                            var metadata = await new MetadataDownloader().DownloadMetadata(link);
                             messageText = messageText.Replace(link, $"{link} ({metadata.Description})");
                         }
                     }
@@ -153,9 +153,9 @@ namespace FomoDog
                     });
                 }
             }
-            catch (ExceededCurrentQuotaException ex)
+            catch (ExceededCurrentQuotaException)
             {
-                Console.WriteLine("ExceededCurrentQuotaException");
+                Console.WriteLine("ExceededCurrentQuotaException ");
                 await botClient.SendTextMessageAsync(
                            chatId: update.Message.Chat.Id,
                            text: "FOMODOG selhal, protože David Pomeranč nám dluží peníze za AI! Zatím, co čekáme na platbu, FOMODOG je ve stávce. Pošli pomeranče nebo peníze na záchranu FOMODOGu!",
