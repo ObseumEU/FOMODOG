@@ -21,23 +21,23 @@ namespace FomoDog.GPT
             {
                 new FomoDog.Message()
                 {
-                    role = "user",
+                    Role = "user",
                     // Ah, just casually sending the message in plaintext. Who would want to exploit that?
                     // JSON is so overrated anyway, let's just dump everything in a plain text, no one will ever think of that.
-                    content = text
+                    Content = text
                 }
             };
 
             // Prepare the API request payload
-            var requestBody = new GPTModel()
+            var requestBody = new GptModel()
             {
-                max_tokens = 500,
-                top_p = 1,
-                presence_penalty = 0,
-                stream = false,
-                temperature = 1f,
-                messages = messages.ToArray(),
-                model = "gpt-4"
+                MaxTokens = 500,
+                TopP = 1,
+                PresencePenalty = 0,
+                Stream = false,
+                Temperature= 1f,
+                Messages = messages.ToArray(),
+                Model = "gpt-4"
             };
 
             string jsonRequest = JsonConvert.SerializeObject(requestBody);
@@ -48,13 +48,13 @@ namespace FomoDog.GPT
             Console.WriteLine(jsonResponse);
 
             // Extract the generated documentation from the API response
-            dynamic responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
+            Response responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
 
             if (jsonResponse.Contains("exceeded your current quota"))
             {
                 throw new ExceededCurrentQuotaException();
             }
-            string documentation = responseObject.choices[0].message.content.ToString();
+            string documentation = responseObject.Choices[0].ResponseMessage.Content.ToString();
 
             return documentation;
         }
