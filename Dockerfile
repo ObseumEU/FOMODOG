@@ -1,34 +1,20 @@
-# Use the official Microsoft .NET Core SDK image as the build image
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS test
-WORKDIR /tests
-ENTRYPOINT ["dotnet", "test"]
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-
-# Set the working directory within the build container
-WORKDIR /src
-
-# Copy your source code to the build container
-COPY . ./
-
-WORKDIR /src
-# Restore NuGet packages
-RUN dotnet restore
-
-# Build the application in Release mode
-RUN dotnet build --configuration Release --no-restore -o /app/build
-
-# Publish the application
-RUN dotnet publish --configuration Release -o /app/publish /p:UseAppHost=false
-
-# Use the official Microsoft .NET Core runtime image as the base image for the final stage
-FROM mcr.microsoft.com/dotnet/runtime:7.0
-
-# Set the working directory within the container
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 WORKDIR /app
 
-# Copy the published application files from the build container to the runtime container
-COPY --from=build /app/publish .
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["FomoDog.csproj", "."]
+RUN dotnet restore "./FomoDog.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "FomoDog.csproj" -c Release -o /app/build
 
-# Set the entrypoint command to execute your console application
+FROM build AS publish
+RUN dotnet publish "FomoDog.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FomoDog.dll"]
