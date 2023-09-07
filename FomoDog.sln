@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FomoDog", "FomoDog.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FomoDog.Tests", "FomoDog.Tests\FomoDog.Tests.csproj", "{AF11DE2B-CF77-47EE-96A8-86DF600465C4}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{53F28083-FD9B-4164-ACE2-9F510DA8C073}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AF11DE2B-CF77-47EE-96A8-86DF600465C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF11DE2B-CF77-47EE-96A8-86DF600465C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF11DE2B-CF77-47EE-96A8-86DF600465C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F28083-FD9B-4164-ACE2-9F510DA8C073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F28083-FD9B-4164-ACE2-9F510DA8C073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F28083-FD9B-4164-ACE2-9F510DA8C073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F28083-FD9B-4164-ACE2-9F510DA8C073}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

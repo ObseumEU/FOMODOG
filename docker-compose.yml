@@ -1,13 +1,11 @@
-version: '3.7'
+version: '3.8'
+
 services:
   fomodog:
-    restart: always
-    image: smixers/fomodog:latest
+    image: smixers/fomodog:latest 
     container_name: fomodog
     mem_limit: 128M
     mem_reservation: 128M
-    environment:
-      - Options__API_KEY={PUT_HERE_YOUR_CHATGPT_API_KEY}
-      - Options__API_URL={PUT_HERE_YOUR_CHATGPT_API_URL}
-      - Options__TELEGRAM_KEY={PUT_HERE_YOUR_TELEGRAM_BOT_TOKEN}
-      - Options__PROMPT_PREFIX={PUT_HERE_PROMPT}
+    build:
+      context: .
+      dockerfile: Dockerfile
