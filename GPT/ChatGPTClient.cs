@@ -31,7 +31,7 @@ namespace FomoDog.GPT
             // Prepare the API request payload
             var requestBody = new GptModel()
             {
-                MaxTokens = 500,
+                MaxTokens = 1500, //Hardcoded? What to expect when developing from a phone on the beach?
                 TopP = 1,
                 PresencePenalty = 0,
                 Stream = false,
