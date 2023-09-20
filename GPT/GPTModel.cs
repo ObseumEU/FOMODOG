@@ -14,13 +14,13 @@ namespace FomoDog
         public int MaxTokens { get; set; }
 
         [JsonProperty("top_p")]
-        public int TopP { get; set; }
+        public float TopP { get; set; }
 
         [JsonProperty("frequency_penalty")]
         public float FrequencyPenalty { get; set; }
 
         [JsonProperty("presence_penalty")]
-        public int PresencePenalty { get; set; }
+        public float PresencePenalty { get; set; }
 
         [JsonProperty("model")]
         public string Model { get; set; }
