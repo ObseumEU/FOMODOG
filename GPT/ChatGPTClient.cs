@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Text;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace FomoDog.GPT
 {
@@ -33,7 +33,7 @@ namespace FomoDog.GPT
                 TopP = _options.Value.TopP,
                 PresencePenalty = _options.Value.PresencePenalty,
                 Stream = false,
-                Temperature= _options.Value.Temperature,
+                Temperature = _options.Value.Temperature,
                 Messages = messages.ToArray(),
                 Model = "gpt-4"
             };

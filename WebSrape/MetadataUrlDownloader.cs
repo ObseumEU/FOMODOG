@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using System.Net;
 
 namespace FomoDog
 {
