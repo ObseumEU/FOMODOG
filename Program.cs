@@ -23,7 +23,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         services.Configure<ChatRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();
-        services.AddScoped<ChatRepository>();
+        services.AddScoped<IChatRepository,ChatRepository>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
         services.AddScoped<Chatbot>();

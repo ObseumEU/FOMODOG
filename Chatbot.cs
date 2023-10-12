@@ -23,9 +23,9 @@ namespace FomoDog
         readonly ChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         readonly IOptions<TelegramOptions> _telegramOptions;
-        readonly ChatRepository _chatRepository;
+        readonly IChatRepository _chatRepository;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ChatRepository chatRepository)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, IChatRepository chatRepository)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
