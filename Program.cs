@@ -1,11 +1,12 @@
 ﻿using FomoDog;
 using FomoDog.Context;
+using FomoDog.Context.Database;
 using FomoDog.Context.FileRepository;
 using FomoDog.GPT;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using System.IO.Abstractions;
 
@@ -19,9 +20,15 @@ var config = new ConfigurationBuilder()
     .Build();
 
 using IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .ConfigureServices((hostContext, services) =>
     {
+
+        IConfiguration configuration = hostContext.Configuration;
+
         services.AddFeatureManagement(config);
+
+        services.AddDbContext<ChatDbContext>(options =>
+        options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.Configure<FileRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();
@@ -35,6 +42,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddScoped<ChatGPTClient>();
+
     })
     .Build();
 

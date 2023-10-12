@@ -5,8 +5,12 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>53f28083-fd9b-4164-ace2-9f510da8c073</ProjectGuid>
   </PropertyGroup>
+  <PropertyGroup>
+    <DockerLaunchAction>None</DockerLaunchAction>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="Dockerfile" />
   </ItemGroup>
 </Project>
