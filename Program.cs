@@ -4,6 +4,7 @@ using FomoDog.GPT;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using System.IO.Abstractions;
 
@@ -23,7 +24,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         services.Configure<ChatRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();
-        services.AddScoped<IChatRepository,ChatRepository>();
+
+        services.AddScoped<IChatRepositoryFactory, ChatRepositoryFactory>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
         services.AddScoped<Chatbot>();
