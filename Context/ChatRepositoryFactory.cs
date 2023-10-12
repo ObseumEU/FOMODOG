@@ -18,24 +18,26 @@ namespace FomoDog.Context
     {
         private readonly IFeatureManager _featureManager;
         private readonly IFileSystem _fileSystem;
-        private readonly IOptions<ChatRepositoryOption> _options;
+        private readonly IOptions<ChatRepositoryOption> _chatRepositoryOption;
+        private readonly IOptions<DatabaseRepositoryOptions> _databaseRepositoryOptions;
 
-        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<ChatRepositoryOption> options)
+        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<ChatRepositoryOption> chatRepositoryOption, IOptions<DatabaseRepositoryOptions> databaseRepositoryOptions)
         {
             _featureManager = featureManager;
             _fileSystem = fileSystem;
-            _options = options;
+            _chatRepositoryOption = chatRepositoryOption;
+            _databaseRepositoryOptions = databaseRepositoryOptions;
         }
 
         public async Task<IChatRepository> CreateRepositoryAsync()
         {
             if (await _featureManager.IsEnabledAsync(FeatureFlags.STORE_DATA_IN_DATABASE))
             {
-                throw new Exception("STORE_DATA_IN_DATABASE Not implemented");
+                return new DatabaseRepository(_databaseRepositoryOptions);
             }
             else
             {
-                return new ChatRepository(_fileSystem, _options);
+                return new ChatRepository(_fileSystem, _chatRepositoryOption);
             }
         }
     }
