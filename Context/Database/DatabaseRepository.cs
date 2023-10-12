@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.IO.Abstractions;
 
-namespace FomoDog.Context
+namespace FomoDog.Context.Database
 {
 
     public class DatabaseRepository : IChatRepository

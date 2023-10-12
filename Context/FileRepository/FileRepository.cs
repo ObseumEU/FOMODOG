@@ -3,13 +3,13 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.IO.Abstractions;
 
-namespace FomoDog.Context
+namespace FomoDog.Context.FileRepository
 {
-    public class ChatRepository : IChatRepository
+    public class FileRepository : IChatRepository
     {
         readonly IFileSystem _fileSystem;
-        readonly IOptions<ChatRepositoryOption> _options;
-        public ChatRepository(IFileSystem fileSystem, IOptions<ChatRepositoryOption> options)
+        readonly IOptions<FileRepositoryOption> _options;
+        public FileRepository(IFileSystem fileSystem, IOptions<FileRepositoryOption> options)
         {
             _fileSystem = fileSystem;
             _options = options;

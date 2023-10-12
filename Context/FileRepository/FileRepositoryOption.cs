@@ -1,6 +1,6 @@
-﻿namespace FomoDog.Context
+﻿namespace FomoDog.Context.FileRepository
 {
-    public class ChatRepositoryOption
+    public class FileRepositoryOption
     {
         public string RepositoryPath { get; set; } = "./data.txt";
         public int MaxMessagesStoreCount { get; set; } = 20;

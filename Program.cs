@@ -1,5 +1,6 @@
 ﻿using FomoDog;
 using FomoDog.Context;
+using FomoDog.Context.FileRepository;
 using FomoDog.GPT;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddFeatureManagement(config);
 
-        services.Configure<ChatRepositoryOption>(config.GetSection("Repository"));
+        services.Configure<FileRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();
 
         services.AddScoped<IChatRepositoryFactory, ChatRepositoryFactory>();

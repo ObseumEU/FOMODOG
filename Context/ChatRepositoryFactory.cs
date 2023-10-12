@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using FomoDog.Context.Database;
+using FomoDog.Context.FileRepository;
+using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using System;
 using System.Collections.Generic;
@@ -18,10 +20,10 @@ namespace FomoDog.Context
     {
         private readonly IFeatureManager _featureManager;
         private readonly IFileSystem _fileSystem;
-        private readonly IOptions<ChatRepositoryOption> _chatRepositoryOption;
+        private readonly IOptions<FileRepositoryOption> _chatRepositoryOption;
         private readonly IOptions<DatabaseRepositoryOptions> _databaseRepositoryOptions;
 
-        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<ChatRepositoryOption> chatRepositoryOption, IOptions<DatabaseRepositoryOptions> databaseRepositoryOptions)
+        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<FileRepositoryOption> chatRepositoryOption, IOptions<DatabaseRepositoryOptions> databaseRepositoryOptions)
         {
             _featureManager = featureManager;
             _fileSystem = fileSystem;
@@ -37,7 +39,7 @@ namespace FomoDog.Context
             }
             else
             {
-                return new ChatRepository(_fileSystem, _chatRepositoryOption);
+                return new FileRepository.FileRepository(_fileSystem, _chatRepositoryOption);
             }
         }
     }

@@ -1,5 +1,4 @@
-
-using FomoDog.Context;
+using FomoDog.Context.FileRepository;
 using FomoDog.Context.Models;
 using Microsoft.Extensions.Options;
 using System.IO.Abstractions.TestingHelpers;
@@ -25,12 +24,12 @@ namespace FomoDog.Tests
         public async Task Shoud_Return_All_Messages()
         {
             MockFileSystem fileSystem;
-            IOptions<ChatRepositoryOption> moqOptions;
+            IOptions<FileRepositoryOption> moqOptions;
             ArrageDependencies(out fileSystem, out moqOptions);
 
             var activity = CreateChatActivity("1", "Olda Master", "Hello", DateTime.UtcNow);
 
-            Context.IChatRepository repository = new ChatRepository(fileSystem.FileSystem, moqOptions);
+            Context.IChatRepository repository = new FileRepository(fileSystem.FileSystem, moqOptions);
             await repository.AddActivity(activity);
             var activities = await repository.GetAllActivity("1");
 
@@ -39,10 +38,10 @@ namespace FomoDog.Tests
             Assert.Equal(activity.From, activities.First().From);
         }
 
-        private static void ArrageDependencies(out MockFileSystem fileSystem, out IOptions<ChatRepositoryOption> moqOptions)
+        private static void ArrageDependencies(out MockFileSystem fileSystem, out IOptions<FileRepositoryOption> moqOptions)
         {
             fileSystem = new MockFileSystem();
-            moqOptions = Options.Create(new ChatRepositoryOption()
+            moqOptions = Options.Create(new FileRepositoryOption()
             {
                 RepositoryPath = "./data.txt",
                 MaxMessagesStoreCount = 30
@@ -53,9 +52,9 @@ namespace FomoDog.Tests
         public async Task Shoud_Trim_Activities()
         {
             MockFileSystem fileSystem;
-            IOptions<ChatRepositoryOption> moqOptions;
+            IOptions<FileRepositoryOption> moqOptions;
             ArrageDependencies(out fileSystem, out moqOptions);
-            Context.IChatRepository repository = new ChatRepository(fileSystem.FileSystem, moqOptions);
+            Context.IChatRepository repository = new FileRepository(fileSystem.FileSystem, moqOptions);
             ChatActivity? checkActivity = null!;
             for (int i = 0; i < 30; i++)
             {
