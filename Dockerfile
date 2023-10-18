@@ -15,8 +15,8 @@ FROM build AS test
 WORKDIR /src
 COPY . .
 RUN if [ "$RUN_TESTS" = "true" ]; then \
-      dotnet test "./FomoDog.Tests" --logger "console;verbosity=detailed" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage/'
-    fi
+      dotnet test "./FomoDog.Tests" --logger "console;verbosity=detailed" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage/' \
+    ; fi
 
 FROM build AS publish
 RUN dotnet publish "FomoDog.csproj" -c Release -o /app/publish /p:UseAppHost=false
