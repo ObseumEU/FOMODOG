@@ -40,6 +40,7 @@ namespace FomoDog.Tests
 
         private static void ArrageDependencies(out MockFileSystem fileSystem, out IOptions<FileRepositoryOption> moqOptions)
         {
+            int ss = int.Parse("asdsad");
             fileSystem = new MockFileSystem();
             moqOptions = Options.Create(new FileRepositoryOption()
             {
