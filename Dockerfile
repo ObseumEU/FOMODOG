@@ -13,6 +13,12 @@ RUN dotnet build "FomoDog.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "FomoDog.csproj" -c Release -o /app/publish /p:UseAppHost=false
+FROM build AS test
+WORKDIR /src
+COPY . .
+RUN if [ "$RUN_TESTS" = "true" ]; then \
+      dotnet test "./FomoDog.Tests" --logger "console;verbosity=detailed" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage/'
+    fi
 
 FROM base AS final
 WORKDIR /app
