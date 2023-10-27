@@ -13,18 +13,21 @@ services:
       dockerfile: Dockerfile
     environment:  # Add environment variables required for your application to connect to the DB
       - DATABASE_URL=postgres://postgres:password@db:5432/fomodog
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
-      - db  # This ensures fomodog starts only after the db service is up
+      - mongo  # This ensures fomodog starts only after the db service is up
 
-  db:
-    image: postgres:16.0
-    container_name: fomodog_postgres
+  mongo:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb
     environment:
-      POSTGRES_DB: fomodog
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: admin  # use more secure credentials
+      MONGO_INITDB_ROOT_PASSWORD: password  # use more secure credentials
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mongo_data:/data/db  # This named volume is new
+    ports:
+      - 27017:27017  # standard MongoDB port
 
 volumes:
-  pgdata:
+  mongo_data:

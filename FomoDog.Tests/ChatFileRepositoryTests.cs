@@ -6,7 +6,7 @@ using Xunit;
 
 namespace FomoDog.Tests
 {
-    public class ChatRepositoryTests
+    public class ChatFileRepositoryTests
     {
         private ChatActivity CreateChatActivity(string chatId, string from, string content, DateTime date)
         {

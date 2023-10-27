@@ -1,4 +1,6 @@
-﻿namespace FomoDog.Context.Models
+﻿using Newtonsoft.Json.Linq;
+
+namespace FomoDog.Context.Models
 {
     public class ChatActivity
     {

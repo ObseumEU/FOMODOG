@@ -1,5 +1,5 @@
-﻿using FomoDog.Context.Database;
-using FomoDog.Context.FileRepository;
+﻿using FomoDog.Context.FileRepository;
+using FomoDog.Context.MongoDB;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using System.IO.Abstractions;
@@ -16,21 +16,21 @@ namespace FomoDog.Context
         private readonly IFeatureManager _featureManager;
         private readonly IFileSystem _fileSystem;
         private readonly IOptions<FileRepositoryOption> _chatRepositoryOption;
-        private readonly ChatDbContext _chatDbContext;
+        private readonly IOptions<MongoDBOptions> _mongoDBOptions;
 
-        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<FileRepositoryOption> chatRepositoryOption, ChatDbContext chatDbContext)
+        public ChatRepositoryFactory(IFeatureManager featureManager, IFileSystem fileSystem, IOptions<FileRepositoryOption> chatRepositoryOption, IOptions<MongoDBOptions> mongoDBOptions)
         {
             _featureManager = featureManager;
             _fileSystem = fileSystem;
             _chatRepositoryOption = chatRepositoryOption;
-            _chatDbContext = chatDbContext;
+            _mongoDBOptions = mongoDBOptions;
         }
 
         public async Task<IChatRepository> CreateRepositoryAsync()
         {
             if (await _featureManager.IsEnabledAsync(FeatureFlags.STORE_DATA_IN_DATABASE))
             {
-                return new DatabaseRepository(_chatDbContext);
+                return new MongoDBRepository(_mongoDBOptions);
             }
             else
             {
