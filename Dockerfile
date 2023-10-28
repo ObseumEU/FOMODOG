@@ -11,8 +11,7 @@ COPY . .
 WORKDIR /src
 ARG RUN_TESTS
 RUN if [ "$RUN_TESTS" = "true" ]; then \
-      dotnet test ./FomoDog.Tests --collect:"XPlat Code Coverage" --results-directory:"./coverage/"; \
-      mkdir -p /app/coverage/ cp ./coverage/*/ /app/coverage/; \
+      dotnet test ./FomoDog.Tests --collect:"XPlat Code Coverage" --results-directory:"/app/coverage/"; \
     fi
 
 RUN dotnet build "FomoDog.csproj" -c Release -o /app/build

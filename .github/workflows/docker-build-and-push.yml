@@ -37,7 +37,9 @@ jobs:
 
         - name: Extract coverage reports
           run: |
+            docker pull smixers/fomodog:latest 
             docker create --name temp-container smixers/fomodog:latest
+            docker exec temp-container ls -al /app
             docker cp temp-container:/app/coverage/ coverage/
             docker rm temp-container
 
