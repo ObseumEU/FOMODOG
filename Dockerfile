@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["FomoDog.csproj", "."]
 RUN dotnet restore "./FomoDog.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR /src
 ARG RUN_TESTS
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       dotnet test ./FomoDog.Tests --collect:"XPlat Code Coverage" --results-directory:"./coverage/"; \

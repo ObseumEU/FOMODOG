@@ -2,9 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Riok.Mapperly.Abstractions;
 
 namespace FomoDog.Context.MongoDB.Models
 {

@@ -1,6 +1,4 @@
-﻿using MongoDB.Driver;
-
-namespace FomoDog.Context.MongoDB
+﻿namespace FomoDog.Context.MongoDB
 {
     public class MongoDBOptions
     {
