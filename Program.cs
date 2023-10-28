@@ -19,7 +19,7 @@ var config = new ConfigurationBuilder()
     .Build();
 
 using IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureServices((services) =>
     {
         services.AddFeatureManagement(config);
 
