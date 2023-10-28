@@ -22,4 +22,5 @@ RUN dotnet publish "FomoDog.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /app/coverage ./coverage
 ENTRYPOINT ["dotnet", "FomoDog.dll"]
