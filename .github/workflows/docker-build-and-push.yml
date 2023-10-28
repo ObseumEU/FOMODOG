@@ -33,7 +33,7 @@ jobs:
       steps:
         # This step is necessary to interact with Docker layers
         - name: Checkout repository
-          uses: actions/checkout@v2
+          uses: actions/checkout@v4
 
         - name: Extract coverage reports
           run: |
