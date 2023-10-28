@@ -21,13 +21,7 @@ var config = new ConfigurationBuilder()
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-
-        IConfiguration configuration = hostContext.Configuration;
-
         services.AddFeatureManagement(config);
-
-        //services.AddDbContext<ChatDbContext>(options =>
-        //options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.Configure<MongoDBOptions>(config.GetSection("MongoDBOptions"));
 
@@ -43,7 +37,6 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddScoped<ChatGPTClient>();
-
     })
     .Build();
 
