@@ -159,7 +159,7 @@ namespace FomoDog
                 Console.WriteLine("ExceededCurrentQuotaException ");
                 await botClient.SendTextMessageAsync(
                            chatId: update.Message.Chat.Id,
-                           text: "FOMODOG selhal, protože David Pomeranč nám dluží peníze za AI! Zatím, co čekáme na platbu, FOMODOG je ve stávce. Pošli pomeranče nebo peníze na záchranu FOMODOGu!",
+                           text: _chatbotOptions.Value.ExceededCurrentQuotaException,
                            cancellationToken: cancellationToken);
             }
             catch (Exception ex)
