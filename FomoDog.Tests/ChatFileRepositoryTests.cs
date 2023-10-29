@@ -16,7 +16,7 @@ namespace FomoDog.Tests
                 From = from,
                 Content = content,
                 Date = date,
-                RawMessage = string.Empty,
+                RawMessage = "{ \"Test\":\"Test\"}",
             };
         }
 

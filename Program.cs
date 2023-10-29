@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
+using MongoDB.Driver;
 using System.IO.Abstractions;
 
 IHostEnvironment env = Host.CreateDefaultBuilder(args).Build().Services.GetRequiredService<IHostEnvironment>();
@@ -24,6 +25,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddFeatureManagement(config);
 
         services.Configure<MongoDBOptions>(config.GetSection("MongoDBOptions"));
+        var mongoDbOptions = config.GetSection("MongoDBOptions").Get<MongoDBOptions>();
+        services.AddSingleton<IMongoClient>(serviceProvider =>
+        {
+            return new MongoClient(mongoDbOptions.ConnectionString);
+        });
 
         services.Configure<FileRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();

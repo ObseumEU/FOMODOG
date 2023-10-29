@@ -9,14 +9,19 @@ namespace FomoDog.Context.MongoDB
 {
     public class MongoDBRepository : IChatRepository
     {
-        private ActivityMapper _mapper;
-        private IMongoCollection<Activity> _activities;
+        private readonly ActivityMapper _mapper;
+        private readonly IMongoCollection<Activity> _activities;
 
-        public MongoDBRepository(IOptions<MongoDBOptions> options)
+        // Constructor now takes a MongoClient and a database name. These can be mocked for testing.
+        public MongoDBRepository(IMongoClient mongoClient, IOptions<MongoDBOptions> options)
         {
+            if (mongoClient == null)
+            {
+                throw new ArgumentNullException(nameof(mongoClient));
+            }
+
             _mapper = new ActivityMapper();
-            var client = new MongoClient(options.Value.ConnectionString);
-            var database = client.GetDatabase("Fomodog");
+            var database = mongoClient.GetDatabase(options.Value.Database);
             _activities = database.GetCollection<Activity>("activities");
         }
 

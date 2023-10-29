@@ -35,13 +35,14 @@ namespace FomoDog.Context.MongoDB.Models
         {
             if (activity == null)
                 return default;
+
             var target = new Activity()
             {
                 ChatId = activity.ChatId,
                 From = activity.From,
                 Content = activity.Content,
                 Date = activity.Date,
-                RawMessage = BsonDocument.Parse(activity.RawMessage),
+                RawMessage = activity.RawMessage == null ? null : BsonDocument.Parse(activity.RawMessage),
             };
             return target;
         }
@@ -55,7 +56,7 @@ namespace FomoDog.Context.MongoDB.Models
             target.From = activity.From;
             target.Content = activity.Content;
             target.Date = activity.Date;
-            target.RawMessage = activity.RawMessage.ToJson();
+            target.RawMessage = activity.RawMessage?.ToJson();
             return target;
         }
     }
