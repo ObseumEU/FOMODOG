@@ -167,7 +167,7 @@ namespace FomoDog
                 Console.WriteLine(ex.Message);
                 await botClient.SendTextMessageAsync(
                            chatId: update.Message.Chat.Id,
-                           text: "Ups, něco se pokazilo.",
+                           text: _chatbotOptions.Value.FatalError,
                            cancellationToken: cancellationToken);
             }
         }
