@@ -12,8 +12,6 @@ namespace FomoDog.Tests
 {
     public class MongoDBRepositoryTests
     {
-        private readonly Mock<IMongoClient> _mockMongoClient;
-        private readonly Mock<IMongoDatabase> _mockMongoDatabase;
         private readonly Mock<IMongoCollection<Activity>> _mockMongoCollection;
         private readonly MongoDBRepository _repository;
         private const string TestDbConnectionString = "mongodb://localhost:27017";
@@ -22,8 +20,8 @@ namespace FomoDog.Tests
 
         public MongoDBRepositoryTests()
         {
-            _mockMongoClient = new Mock<IMongoClient>();
-            _mockMongoDatabase = new Mock<IMongoDatabase>();
+            var _mockMongoClient = new Mock<IMongoClient>();
+            var _mockMongoDatabase = new Mock<IMongoDatabase>();
             _mockMongoCollection = new Mock<IMongoCollection<Activity>>();
 
             var options = Options.Create(new MongoDBOptions
