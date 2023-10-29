@@ -36,7 +36,7 @@ namespace FomoDog
 
         public async Task Run()
         {
-            var botClient = new TelegramBotClient(_telegramOptions.Value.Key);
+            ITelegramBotClient botClient = new TelegramBotClient(_telegramOptions.Value.Key);
             _chatRepository = await _chatRepositoryFactory.CreateRepositoryAsync();
             using CancellationTokenSource cts = new(); // So much for running forever.
 
