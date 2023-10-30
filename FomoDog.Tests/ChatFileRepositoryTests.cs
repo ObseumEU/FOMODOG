@@ -69,7 +69,6 @@ namespace FomoDog.Tests
 
             var count = (await repository.GetAllActivity("1")).Count;
             Assert.Equal(30, count);
-            await repository.TrimActivity("1", 10);
             count = (await repository.GetAllActivity("1")).Count;
             Assert.Equal(10, count);
             var all = (await repository.GetAllActivity("1"));

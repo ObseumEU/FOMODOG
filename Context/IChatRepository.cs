@@ -10,10 +10,5 @@ namespace FomoDog.Context
         /// Get latest messages
         /// </summary>
         Task<List<ChatActivity>> GetAllActivity(string chatId);
-
-        /// <summary>
-        /// Remove all messages except the last <paramref name="maxMessagesStoreCount"/> messages.
-        /// </summary>
-        Task TrimActivity(string chatId, int maxMessagesStoreCount);
     }
 }
