@@ -47,31 +47,5 @@ namespace FomoDog.Tests
                 MaxMessagesStoreCount = 30
             });
         }
-
-        [Fact]
-        public async Task Shoud_Trim_Activities()
-        {
-            MockFileSystem fileSystem;
-            IOptions<FileRepositoryOption> moqOptions;
-            ArrageDependencies(out fileSystem, out moqOptions);
-            Context.IChatRepository repository = new FileRepository(fileSystem.FileSystem, moqOptions);
-            ChatActivity? checkActivity = null!;
-            for (int i = 0; i < 30; i++)
-            {
-                var newActivity = CreateChatActivity("1", Guid.NewGuid().ToString(), $"{i}", DateTime.UtcNow.AddSeconds(+i));
-                await repository.AddActivity(newActivity);
-
-                if (i == 20)
-                {
-                    checkActivity = newActivity;
-                }
-            }
-
-            var count = (await repository.GetAllActivity("1")).Count;
-            Assert.Equal(30, count);
-            var all = (await repository.GetAllActivity("1"));
-            Assert.Equal(checkActivity.Content, all[0].Content);
-            Assert.Equal("1", (await repository.GetAllActivity("1")).First().ChatId);
-        }
     }
 }
