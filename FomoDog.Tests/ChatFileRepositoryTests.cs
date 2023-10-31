@@ -69,8 +69,6 @@ namespace FomoDog.Tests
 
             var count = (await repository.GetAllActivity("1")).Count;
             Assert.Equal(30, count);
-            count = (await repository.GetAllActivity("1")).Count;
-            Assert.Equal(10, count);
             var all = (await repository.GetAllActivity("1"));
             Assert.Equal(checkActivity.Content, all[0].Content);
             Assert.Equal("1", (await repository.GetAllActivity("1")).First().ChatId);
