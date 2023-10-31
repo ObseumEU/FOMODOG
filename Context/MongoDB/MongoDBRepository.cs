@@ -47,10 +47,5 @@ namespace FomoDog.Context.MongoDB
             var mappedActivities = activities.Select(a => _mapper.ActivityToChatActivity(a)).ToList();
             return mappedActivities;
         }
-
-        public async Task TrimActivity(string chatId, int maxMessagesStoreCount)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
