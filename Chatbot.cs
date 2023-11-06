@@ -7,6 +7,7 @@ So, in conclusion, let me apologize:
 
 using FomoDog.Context;
 using FomoDog.GPT;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
@@ -25,13 +26,15 @@ namespace FomoDog
         readonly IOptions<TelegramOptions> _telegramOptions;
         readonly IChatRepositoryFactory _chatRepositoryFactory;
         IChatRepository _chatRepository;
+        ILogger<Chatbot> _log;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, IChatRepositoryFactory chatRepositoryFactory)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, IChatRepositoryFactory chatRepositoryFactory, ILogger<Chatbot> log)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
             _gpt = gpt;
             _chatRepositoryFactory = chatRepositoryFactory;
+            _log = log;
         }
 
         public async Task Run()
@@ -80,83 +83,88 @@ namespace FomoDog
                 if (message.Text is not { } messageText)
                     return;
                 var chatId = message.Chat.Id;
-                var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
-                if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
+
+                using (_log.BeginScope(new Dictionary<string, object> { { "ChatId", chatId } }))
                 {
-                    await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                            text: "Moment, jen si projdu chat.",
-                            cancellationToken: cancellationToken);
 
-                    var userPrompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt);
-                    await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                    var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
+                    if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                     {
-                        ChatId = message.Chat.Id.ToString(),
-                        Content = userPrompt,
-                        Date = message.Date,
-                        From = message.From.FirstName + message.From.LastName,
-                        RawMessage = JsonConvert.SerializeObject(message)
-                    });
-                    var messages = await _chatRepository.GetAllActivity(message.Chat.Id.ToString());
-
-                    try
-                    {
-                        var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
-                        var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
-                        var response = await _gpt.CallChatGpt(gptPrompt);
-                        // Echo received message text
-
                         await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: response,
-                            cancellationToken: cancellationToken);
+                        chatId: chatId,
+                                text: "Moment, jen si projdu chat.",
+                                cancellationToken: cancellationToken);
+
+                        var userPrompt = ReplaceVariables(_chatbotOptions.Value.UserPrompt);
                         await _chatRepository.AddActivity(new Context.Models.ChatActivity()
                         {
                             ChatId = message.Chat.Id.ToString(),
-                            Content = response,
+                            Content = userPrompt,
                             Date = message.Date,
-                            From = BOT_NAME,
+                            From = message.From.FirstName + message.From.LastName,
+                            RawMessage = JsonConvert.SerializeObject(message)
+                        });
+                        var messages = await _chatRepository.GetAllActivity(message.Chat.Id.ToString());
+
+                        try
+                        {
+                            var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
+                            var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
+                            var response = await _gpt.CallChatGpt(gptPrompt);
+                            // Echo received message text
+
+                            await botClient.SendTextMessageAsync(
+                                chatId: chatId,
+                                text: response,
+                                cancellationToken: cancellationToken);
+                            await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                            {
+                                ChatId = message.Chat.Id.ToString(),
+                                Content = response,
+                                Date = message.Date,
+                                From = BOT_NAME,
+                                RawMessage = JsonConvert.SerializeObject(message)
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            //DRY? I dont care.
+                            _log.LogError(ex.Message);
+                            var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
+                            // Echo received message text
+                            await botClient.SendTextMessageAsync(
+                                chatId: chatId,
+                                text: response,
+                                cancellationToken: cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        _log.LogInformation($"Received from telefram '{JsonConvert.SerializeObject(message)}");
+                        var links = ExtractHttpsLinks(messageText);
+                        if (links?.Count() > 0)
+                        {
+                            foreach (var link in links)
+                            {
+                                var metadata = await new MetadataDownloader().DownloadMetadata(link);
+                                messageText = messageText.Replace(link, $"{link} ({metadata.Description})");
+                            }
+                        }
+
+                        await _chatRepository.AddActivity(new Context.Models.ChatActivity()
+                        {
+                            ChatId = message.Chat.Id.ToString(),
+                            Content = messageText,
+                            Date = message.Date,
+                            From = from,
                             RawMessage = JsonConvert.SerializeObject(message)
                         });
                     }
-                    catch (Exception ex)
-                    {
-                        //DRY? I dont care.
-                        Console.WriteLine(ex.Message);
-                        var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
-                        // Echo received message text
-                        await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: response,
-                            cancellationToken: cancellationToken);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Received from telefram '{JsonConvert.SerializeObject(message)}");
-                    var links = ExtractHttpsLinks(messageText);
-                    if (links?.Count() > 0)
-                    {
-                        foreach (var link in links)
-                        {
-                            var metadata = await new MetadataDownloader().DownloadMetadata(link);
-                            messageText = messageText.Replace(link, $"{link} ({metadata.Description})");
-                        }
-                    }
-
-                    await _chatRepository.AddActivity(new Context.Models.ChatActivity()
-                    {
-                        ChatId = message.Chat.Id.ToString(),
-                        Content = messageText,
-                        Date = message.Date,
-                        From = from,
-                        RawMessage = JsonConvert.SerializeObject(message)
-                    });
                 }
             }
             catch (ExceededCurrentQuotaException)
             {
-                Console.WriteLine("ExceededCurrentQuotaException ");
+                _log.LogError("ExceededCurrentQuotaException ");
                 await botClient.SendTextMessageAsync(
                            chatId: update.Message.Chat.Id,
                            text: _chatbotOptions.Value.ExceededCurrentQuotaException,
@@ -164,7 +172,7 @@ namespace FomoDog
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _log.LogError(ex.Message);
                 await botClient.SendTextMessageAsync(
                            chatId: update.Message.Chat.Id,
                            text: _chatbotOptions.Value.FatalError,
