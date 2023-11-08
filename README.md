@@ -4,6 +4,7 @@
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/smixers/fomodog.svg)](https://hub.docker.com/r/smixers/fomodog)
 [![codecov](https://codecov.io/github/BooAIPublic/FOMODOG/graph/badge.svg?token=d6PRERlhdo)](https://codecov.io/github/BooAIPublic/FOMODOG)
+[![CodeQL](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql)
 
 # Patreons
 Daniel Brvnišťan, David Roško
