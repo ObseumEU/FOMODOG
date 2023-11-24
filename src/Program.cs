@@ -54,7 +54,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 var telegramConfig = config.GetSection("Telegram").Get<TelegramOptions>();
                 return new TelegramBotClient(telegramConfig.Key);
             });
-        services.AddScoped<DialogFlow>();
+        services.AddScoped<IDialogFlow, DialogFlow>();
 
 
     })

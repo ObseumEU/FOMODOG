@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FomoDog.Tests
 {
-    public class ChatbotTest
+    public class DialogFlowTest
     {
         private Mock<IChatGPTClient> mockGptClient;
         private Mock<IOptions<ChatbotOptions>> mockChatbotOptions;
@@ -20,7 +20,7 @@ namespace FomoDog.Tests
         private Mock<ITelegramBotClient> mockTelegramBotClient;
         private DialogFlow dialogFlow;
 
-        public ChatbotTest()
+        public DialogFlowTest()
         {
             mockGptClient = new Mock<IChatGPTClient>();
             mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();

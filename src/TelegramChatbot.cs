@@ -74,7 +74,7 @@ namespace FomoDog
 
                 using (var scope = _provider.CreateScope())
                 {
-                    var flow = scope.ServiceProvider.GetRequiredService<DialogFlow>();
+                    var flow = scope.ServiceProvider.GetRequiredService<IDialogFlow>();
                     await flow.ReceiveMessage(message, cancellationToken);
                 }
             }

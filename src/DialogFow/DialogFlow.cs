@@ -10,7 +10,7 @@ using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog
 {
-    public class DialogFlow
+    public class DialogFlow : IDialogFlow
     {
         const string BOT_NAME = "FOMODOG";
         readonly IChatGPTClient _gpt;
