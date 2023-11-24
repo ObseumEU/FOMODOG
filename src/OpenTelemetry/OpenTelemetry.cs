@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 
@@ -17,11 +18,14 @@ namespace FomoDog.OpenTelemetry
 
             services.Configure<OpenTelemetryOptions>(configSection);
             Sdk.CreateTracerProviderBuilder()
+                    .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault()
+            .AddService("YourServiceName"))
            .AddSource("fomodog")
+           .AddHttpClientInstrumentation()
            .AddConsoleExporter()
             .AddOtlpExporter(options =>
             {
-
                 options.Endpoint = new Uri(openTelemetryOptions.UrlGrpc);
                 options.Protocol = OtlpExportProtocol.Grpc;
             })
