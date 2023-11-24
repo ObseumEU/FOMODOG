@@ -4,3 +4,4 @@ coverage:
     - "src/Context/MongoDB/Models/RawMessageToBsonDocument.cs"
     - "src/OpenTelemetry/*"
     - "src/GPT/*"
+    - "src/Program.cs"
