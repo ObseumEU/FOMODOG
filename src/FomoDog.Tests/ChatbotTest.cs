@@ -40,7 +40,7 @@ namespace FomoDog.Tests
             };
             mockChatbotOptions.Setup(o => o.Value).Returns(options);
 
-            var dialogFlow = new DialogFlow(
+            dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
                 mockTelegramOptions.Object,
