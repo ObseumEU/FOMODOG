@@ -20,7 +20,7 @@ namespace FomoDog.OpenTelemetry
             Sdk.CreateTracerProviderBuilder()
                     .SetResourceBuilder(
                     ResourceBuilder.CreateDefault()
-            .AddService("YourServiceName"))
+            .AddService("fomodog"))
            .AddSource("fomodog")
            .AddHttpClientInstrumentation()
            .AddConsoleExporter()
