@@ -21,7 +21,7 @@ services:
       - mongodb
 
   collector:
-    image: otel/opentelemetry-collector-contrib:0.81.0
+    image: otel/opentelemetry-collector-contrib:0.89.0
     container_name: collector
     command: [ "--config=/etc/collector.yaml" ]
     ports:
