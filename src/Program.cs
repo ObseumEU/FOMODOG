@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using MongoDB.Driver;
 using System.IO.Abstractions;
+using Telegram.Bot;
 
 IHostEnvironment env = Host.CreateDefaultBuilder(args).Build().Services.GetRequiredService<IHostEnvironment>();
 
@@ -46,7 +47,12 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
         services.AddScoped<Chatbot>();
 
-        services.Configure<TelegramOptions>(config.GetSection("Telegram"));
+        services.AddScoped<ITelegramBotClient>(serviceProvider =>
+            {
+                services.Configure<TelegramOptions>(config.GetSection("Telegram"));
+                var telegramConfig = config.GetSection("Telegram").Get<TelegramOptions>();
+                return new TelegramBotClient(telegramConfig.Key);
+            });
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddScoped<ChatGPTClient>();

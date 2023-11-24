@@ -27,8 +27,9 @@ namespace FomoDog
         IChatRepository _chatRepository;
         ILogger<Chatbot> _log;
         MetadataDownloader _metadataDownloader;
+        ITelegramBotClient _botClient;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
@@ -36,12 +37,12 @@ namespace FomoDog
             _log = log;
             _chatRepository = chatRepository;
             _metadataDownloader = metadataDownloader;
+            _botClient = botClient;
         }
 
         public async Task Run()
         {
 
-            ITelegramBotClient botClient = new TelegramBotClient(_telegramOptions.Value.Key);
             using CancellationTokenSource cts = new(); // So much for running forever.
 
             // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
@@ -49,14 +50,14 @@ namespace FomoDog
             {
                 AllowedUpdates = Array.Empty<Telegram.Bot.Types.Enums.UpdateType>() // receive all update types
             };
-            botClient.StartReceiving(
+            _botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
             pollingErrorHandler: HandlePollingErrorAsync,
             receiverOptions: receiverOptions,
             cancellationToken: cts.Token
             );
 
-            var me = await botClient.GetMeAsync();
+            var me = await _botClient.GetMeAsync();
             Console.WriteLine($"Start listening for @{me.Username}");
         }
 
