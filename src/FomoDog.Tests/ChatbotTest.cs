@@ -11,18 +11,30 @@ namespace FomoDog.Tests
 {
     public class ChatbotTest
     {
+        private Mock<IChatGPTClient> mockGptClient;
+        private Mock<IOptions<ChatbotOptions>> mockChatbotOptions;
+        private Mock<IOptions<TelegramOptions>> mockTelegramOptions;
+        private Mock<ILogger<DialogFlow>> mockLogger;
+        private Mock<IChatRepository> mockChatRepository;
+        private Mock<IMetadataDownloader> mockMetadataDownloader;
+        private Mock<ITelegramBotClient> mockTelegramBotClient;
+        private DialogFlow dialogFlow;
+
+        public ChatbotTest()
+        {
+            mockGptClient = new Mock<IChatGPTClient>();
+            mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
+            mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
+            mockLogger = new Mock<ILogger<DialogFlow>>();
+            mockChatRepository = new Mock<IChatRepository>();
+            mockMetadataDownloader = new Mock<IMetadataDownloader>();
+            mockTelegramBotClient = new Mock<ITelegramBotClient>();
+        }
+
         [Fact]
         public async Task ReceiveMessage_ShouldProcessTextMessage()
         {
             // Arrange
-            var mockGptClient = new Mock<IChatGPTClient>();
-            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
-            var mockLogger = new Mock<ILogger<DialogFlow>>();
-            var mockChatRepository = new Mock<IChatRepository>();
-            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
-            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
-
             var dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
@@ -53,14 +65,6 @@ namespace FomoDog.Tests
         public async Task ReceiveMessage_ShouldProcessMessageWithLink()
         {
             // Arrange
-            var mockGptClient = new Mock<IChatGPTClient>();
-            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
-            var mockLogger = new Mock<ILogger<DialogFlow>>();
-            var mockChatRepository = new Mock<IChatRepository>();
-            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
-            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
-
             var dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
@@ -99,14 +103,6 @@ namespace FomoDog.Tests
         public async Task ReceiveMessage_ShouldLogErrorOnException()
         {
             // Arrange
-            var mockGptClient = new Mock<IChatGPTClient>();
-            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
-            var mockLogger = new Mock<ILogger<DialogFlow>>();
-            var mockChatRepository = new Mock<IChatRepository>();
-            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
-            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
-
             var dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
@@ -145,14 +141,6 @@ namespace FomoDog.Tests
         public async Task ReceiveMessage_ShouldLogRegularTextMessage()
         {
             // Arrange
-            var mockGptClient = new Mock<IChatGPTClient>();
-            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
-            var mockLogger = new Mock<ILogger<DialogFlow>>();
-            var mockChatRepository = new Mock<IChatRepository>();
-            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
-            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
-
             var dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
@@ -184,14 +172,6 @@ namespace FomoDog.Tests
         public async Task ReceiveMessage_ShouldLogErrorOnExceededQuotaException()
         {
             // Arrange
-            var mockGptClient = new Mock<IChatGPTClient>();
-            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
-            var mockLogger = new Mock<ILogger<DialogFlow>>();
-            var mockChatRepository = new Mock<IChatRepository>();
-            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
-            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
-
             var options = new ChatbotOptions
             {
                 UserPrompt = "Your user prompt here",
