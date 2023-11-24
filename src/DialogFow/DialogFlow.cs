@@ -1,35 +1,26 @@
-﻿/*
-Hello dear code explorer,
-Every line here is unique, special, and dreadfully inefficient. They say "Good things take time", so if time inversely correlates 
-with quality... Well, you can draw your own conclusions.  
-So, in conclusion, let me apologize:
-*/
-
-using FomoDog.Context;
+﻿using FomoDog.Context;
+using FomoDog.DialogFow;
 using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Text.RegularExpressions;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Polling;
 using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog
 {
-    public class Chatbot
+    public class DialogFlow
     {
         const string BOT_NAME = "FOMODOG";
         readonly ChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         readonly IOptions<TelegramOptions> _telegramOptions;
         IChatRepository _chatRepository;
-        ILogger<Chatbot> _log;
+        ILogger<DialogFlow> _log;
         MetadataDownloader _metadataDownloader;
         ITelegramBotClient _botClient;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader, ITelegramBotClient botClient)
+        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
@@ -40,51 +31,12 @@ namespace FomoDog
             _botClient = botClient;
         }
 
-        public async Task Run()
-        {
-
-            using CancellationTokenSource cts = new(); // So much for running forever.
-
-            // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
-            ReceiverOptions receiverOptions = new()
-            {
-                AllowedUpdates = Array.Empty<Telegram.Bot.Types.Enums.UpdateType>() // receive all update types
-            };
-            _botClient.StartReceiving(
-                updateHandler: HandleUpdateAsync,
-            pollingErrorHandler: HandlePollingErrorAsync,
-            receiverOptions: receiverOptions,
-            cancellationToken: cts.Token
-            );
-
-            var me = await _botClient.GetMeAsync();
-            Console.WriteLine($"Start listening for @{me.Username}");
-        }
-
-        public static string[] ExtractHttpsLinks(string inputText)
-        {
-            const string pattern = @"https://\S+";
-            var matches = Regex.Matches(inputText, pattern);
-            var links = new string[matches.Count];
-
-            for (int i = 0; i < matches.Count; i++)
-            {
-                links[i] = matches[i].Value;
-            }
-
-            return links;
-        }
-
-        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Telegram.Bot.Types.Update update, CancellationToken cancellationToken)
+        public async Task ReceiveMessage(Telegram.Bot.Types.Message message, CancellationToken cancellationToken)
         {
             try
             {
-                if (update.Message is not { } message) // Our bot is very picky about the types of messages it accepts.
-                    return;
-                // Only process text messages
-                if (message.Text is not { } messageText)
-                    return;
                 var chatId = message.Chat.Id;
+                var messageText = message.Text;
 
                 using (var activity = OpenTelemetry.OpenTelemetry.Source.StartActivity("Receive message"))
                 {
@@ -93,7 +45,7 @@ namespace FomoDog
 
                     if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                     {
-                        await botClient.SendTextMessageAsync(
+                        await _botClient.SendTextMessageAsync(
                         chatId: chatId,
                                 text: "Moment, jen si projdu chat.",
                                 cancellationToken: cancellationToken);
@@ -120,7 +72,7 @@ namespace FomoDog
                             }
                             // Echo received message text
 
-                            await botClient.SendTextMessageAsync(
+                            await _botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: response,
                             cancellationToken: cancellationToken);
@@ -141,7 +93,7 @@ namespace FomoDog
                             _log.LogError(ex.Message);
                             var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
                             // Echo received message text
-                            await botClient.SendTextMessageAsync(
+                            await _botClient.SendTextMessageAsync(
                                 chatId: chatId,
                                 text: response,
                                 cancellationToken: cancellationToken);
@@ -150,7 +102,7 @@ namespace FomoDog
                     else
                     {
                         _log.LogInformation($"Received from telegfram '{JsonConvert.SerializeObject(message)}");
-                        var links = ExtractHttpsLinks(messageText);
+                        var links = DialogFlowHelpers.ExtractHttpsLinks(messageText);
                         if (links?.Count() > 0)
                         {
                             foreach (var link in links)
@@ -174,16 +126,16 @@ namespace FomoDog
             catch (ExceededCurrentQuotaException)
             {
                 _log.LogError("ExceededCurrentQuotaException ");
-                await botClient.SendTextMessageAsync(
-                           chatId: update.Message.Chat.Id,
+                await _botClient.SendTextMessageAsync(
+                           chatId: message.Chat.Id,
                            text: _chatbotOptions.Value.ExceededCurrentQuotaException,
                            cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {
                 _log.LogError(ex.Message);
-                await botClient.SendTextMessageAsync(
-                           chatId: update.Message.Chat.Id,
+                await _botClient.SendTextMessageAsync(
+                           chatId: message.Chat.Id,
                            text: _chatbotOptions.Value.FatalError,
                            cancellationToken: cancellationToken);
             }
@@ -200,19 +152,6 @@ namespace FomoDog
         {
             return text
                 .Replace("{DateTime.Now}", GetDateString());
-        }
-
-        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-        {
-            var ErrorMessage = exception switch
-            {
-                ApiRequestException apiRequestException
-                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                _ => exception.ToString()
-            };
-
-            Console.WriteLine(ErrorMessage);
-            return Task.CompletedTask;
         }
     }
 }

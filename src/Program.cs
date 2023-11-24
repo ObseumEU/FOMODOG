@@ -45,7 +45,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IFileSystem, FileSystem>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
-        services.AddScoped<Chatbot>();
+        services.AddScoped<TelegramChatbot>();
 
         services.AddScoped<ITelegramBotClient>(serviceProvider =>
             {
@@ -53,6 +53,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 var telegramConfig = config.GetSection("Telegram").Get<TelegramOptions>();
                 return new TelegramBotClient(telegramConfig.Key);
             });
+        services.AddScoped<DialogFlow>();
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
         services.AddScoped<ChatGPTClient>();
@@ -64,6 +65,6 @@ IServiceProvider provider = serviceScope.ServiceProvider;
 var indexInitializer = provider.GetRequiredService<IMongoDBIndexInitializer>();
 await indexInitializer.EnsureIndexesCreatedAsync();
 
-Chatbot chatbot = provider.GetRequiredService<Chatbot>();
+TelegramChatbot chatbot = provider.GetRequiredService<TelegramChatbot>();
 await chatbot.Run();
 await host.RunAsync();

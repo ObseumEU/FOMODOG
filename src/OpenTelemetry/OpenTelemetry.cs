@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
@@ -22,7 +21,7 @@ namespace FomoDog.OpenTelemetry
            .AddConsoleExporter()
             .AddOtlpExporter(options =>
             {
-               
+
                 options.Endpoint = new Uri(openTelemetryOptions.UrlGrpc);
                 options.Protocol = OtlpExportProtocol.Grpc;
             })

@@ -14,7 +14,7 @@ namespace FomoDog
         public async Task<Metadata> DownloadMetadata(string url)
         {
             string html = await DownloadHtml(url);
-            if(string.IsNullOrEmpty(html))
+            if (string.IsNullOrEmpty(html))
                 return null;
             var res = ExtractMetadata(html);
             if (string.IsNullOrEmpty(res.Description) && string.IsNullOrEmpty(res.Title))
