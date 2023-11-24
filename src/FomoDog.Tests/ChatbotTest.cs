@@ -29,12 +29,17 @@ namespace FomoDog.Tests
             mockChatRepository = new Mock<IChatRepository>();
             mockMetadataDownloader = new Mock<IMetadataDownloader>();
             mockTelegramBotClient = new Mock<ITelegramBotClient>();
-        }
 
-        [Fact]
-        public async Task ReceiveMessage_ShouldProcessTextMessage()
-        {
             // Arrange
+            var options = new ChatbotOptions
+            {
+                UserPrompt = "Your user prompt here",
+                ChatDetails = "SomeChatDetails",
+                ExceededCurrentQuotaException = "ExceededCurrentQuotaException",
+                FatalError = "ExceededCurrentQuotaException"
+            };
+            mockChatbotOptions.Setup(o => o.Value).Returns(options);
+
             var dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
@@ -44,6 +49,11 @@ namespace FomoDog.Tests
                 mockMetadataDownloader.Object,
                 mockTelegramBotClient.Object);
 
+        }
+
+        [Fact]
+        public async Task ReceiveMessage_ShouldProcessTextMessage()
+        {
             var message = new Telegram.Bot.Types.Message
             {
                 Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
@@ -64,16 +74,6 @@ namespace FomoDog.Tests
         [Fact]
         public async Task ReceiveMessage_ShouldProcessMessageWithLink()
         {
-            // Arrange
-            var dialogFlow = new DialogFlow(
-                mockChatbotOptions.Object,
-                mockGptClient.Object,
-                mockTelegramOptions.Object,
-                mockLogger.Object,
-                mockChatRepository.Object,
-                mockMetadataDownloader.Object,
-                mockTelegramBotClient.Object);
-
             var message = new Telegram.Bot.Types.Message
             {
                 Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
@@ -102,16 +102,6 @@ namespace FomoDog.Tests
         [Fact]
         public async Task ReceiveMessage_ShouldLogErrorOnException()
         {
-            // Arrange
-            var dialogFlow = new DialogFlow(
-                mockChatbotOptions.Object,
-                mockGptClient.Object,
-                mockTelegramOptions.Object,
-                mockLogger.Object,
-                mockChatRepository.Object,
-                mockMetadataDownloader.Object,
-                mockTelegramBotClient.Object);
-
             var message = new Telegram.Bot.Types.Message
             {
                 Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
@@ -140,16 +130,6 @@ namespace FomoDog.Tests
         [Fact]
         public async Task ReceiveMessage_ShouldLogRegularTextMessage()
         {
-            // Arrange
-            var dialogFlow = new DialogFlow(
-                mockChatbotOptions.Object,
-                mockGptClient.Object,
-                mockTelegramOptions.Object,
-                mockLogger.Object,
-                mockChatRepository.Object,
-                mockMetadataDownloader.Object,
-                mockTelegramBotClient.Object);
-
             var message = new Telegram.Bot.Types.Message
             {
                 Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
@@ -171,23 +151,6 @@ namespace FomoDog.Tests
         [Fact]
         public async Task ReceiveMessage_ShouldLogErrorOnExceededQuotaException()
         {
-            // Arrange
-            var options = new ChatbotOptions
-            {
-                UserPrompt = "Your user prompt here",
-                ChatDetails = "SomeChatDetails"
-            };
-            mockChatbotOptions.Setup(o => o.Value).Returns(options);
-
-            var dialogFlow = new DialogFlow(
-                mockChatbotOptions.Object,
-                mockGptClient.Object,
-                mockTelegramOptions.Object,
-                mockLogger.Object,
-                mockChatRepository.Object,
-                mockMetadataDownloader.Object,
-                mockTelegramBotClient.Object);
-
             var message = new Telegram.Bot.Types.Message
             {
                 Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
