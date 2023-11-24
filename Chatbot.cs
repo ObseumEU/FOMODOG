@@ -39,6 +39,7 @@ namespace FomoDog
 
         public async Task Run()
         {
+
             ITelegramBotClient botClient = new TelegramBotClient(_telegramOptions.Value.Key);
             _chatRepository = await _chatRepositoryFactory.CreateRepositoryAsync();
             using CancellationTokenSource cts = new(); // So much for running forever.
@@ -84,10 +85,11 @@ namespace FomoDog
                     return;
                 var chatId = message.Chat.Id;
 
-                using (_log.BeginScope(new Dictionary<string, object> { { "ChatId", chatId } }))
+                using (var activity = OpenTelemetry.OpenTelemetry.Source.StartActivity("Receive message"))
                 {
-
+                    activity.SetTag("chatId", chatId);
                     var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
+
                     if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
                     {
                         await botClient.SendTextMessageAsync(
@@ -110,13 +112,19 @@ namespace FomoDog
                         {
                             var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
                             var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
-                            var response = await _gpt.CallChatGpt(gptPrompt);
+                            string response = string.Empty;
+                            using (OpenTelemetry.OpenTelemetry.Source.StartActivity("GPT get response"))
+                            {
+                                response = await _gpt.CallChatGpt(gptPrompt);
+                            }
                             // Echo received message text
 
                             await botClient.SendTextMessageAsync(
-                                chatId: chatId,
-                                text: response,
-                                cancellationToken: cancellationToken);
+                            chatId: chatId,
+                            text: response,
+                            cancellationToken: cancellationToken);
+
+
                             await _chatRepository.AddActivity(new Context.Models.ChatActivity()
                             {
                                 ChatId = message.Chat.Id.ToString(),
@@ -140,7 +148,7 @@ namespace FomoDog
                     }
                     else
                     {
-                        _log.LogInformation($"Received from telefram '{JsonConvert.SerializeObject(message)}");
+                        _log.LogInformation($"Received from telegfram '{JsonConvert.SerializeObject(message)}");
                         var links = ExtractHttpsLinks(messageText);
                         if (links?.Count() > 0)
                         {

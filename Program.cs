@@ -4,6 +4,7 @@ using FomoDog.Context.FileRepository;
 using FomoDog.Context.MongoDB;
 using FomoDog.Context.MongoDB.FomoDog.Context.MongoDB;
 using FomoDog.GPT;
+using FomoDog.OpenTelemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +24,8 @@ var config = new ConfigurationBuilder()
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((services) =>
     {
+        services.AddConsoleOpenTelemetry(config.GetSection("OpenTelemetryOptions"));
+
         services.AddFeatureManagement(config);
 
         services.Configure<MongoDBOptions>(config.GetSection("MongoDBOptions"));
