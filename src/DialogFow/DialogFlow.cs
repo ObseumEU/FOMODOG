@@ -12,15 +12,15 @@ namespace FomoDog
     public class DialogFlow
     {
         const string BOT_NAME = "FOMODOG";
-        readonly ChatGPTClient _gpt;
+        readonly IChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         readonly IOptions<TelegramOptions> _telegramOptions;
         IChatRepository _chatRepository;
         ILogger<DialogFlow> _log;
-        MetadataDownloader _metadataDownloader;
+        IMetadataDownloader _metadataDownloader;
         ITelegramBotClient _botClient;
 
-        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader, ITelegramBotClient botClient)
+        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
@@ -134,10 +134,14 @@ namespace FomoDog
             catch (Exception ex)
             {
                 _log.LogError(ex.Message);
-                await _botClient.SendTextMessageAsync(
-                           chatId: message.Chat.Id,
-                           text: _chatbotOptions.Value.FatalError,
-                           cancellationToken: cancellationToken);
+                try
+                {
+                    await _botClient.SendTextMessageAsync(
+                               chatId: message.Chat.Id,
+                               text: _chatbotOptions.Value.FatalError,
+                               cancellationToken: cancellationToken);
+                }
+                catch { }
             }
         }
 

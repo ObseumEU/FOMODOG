@@ -5,7 +5,12 @@ using System.Text;
 
 namespace FomoDog.GPT
 {
-    public class ChatGPTClient
+    public interface IChatGPTClient
+    {
+        Task<string> CallChatGpt(string text);
+    }
+
+    public class ChatGPTClient : IChatGPTClient
     {
         public ChatGPTClient() { }
 
