@@ -24,7 +24,6 @@ namespace FomoDog.Tests
         {
             mockGptClient = new Mock<IChatGPTClient>();
             mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
-            mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
             mockLogger = new Mock<ILogger<DialogFlow>>();
             mockChatRepository = new Mock<IChatRepository>();
             mockMetadataDownloader = new Mock<IMetadataDownloader>();
@@ -43,7 +42,6 @@ namespace FomoDog.Tests
             dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
                 mockGptClient.Object,
-                mockTelegramOptions.Object,
                 mockLogger.Object,
                 mockChatRepository.Object,
                 mockMetadataDownloader.Object,
