@@ -1,98 +1,49 @@
-﻿using RichardSzalay.MockHttp;
+﻿using Moq;
+using RichardSzalay.MockHttp;
 using Xunit;
 
 namespace FomoDog.Tests
 {
     public class MetadataDownloaderTests
     {
-        [Fact]
-        public async Task DownloadMetadata_ShouldExtractTitle_FromHtmlResponse()
+        private Mock<IHttpClientFactory> mockHttpClientFactory;
+        private MetadataDownloader? downloader;
+
+        public MetadataDownloaderTests() => mockHttpClientFactory = new Mock<IHttpClientFactory>();
+
+        private void SetupHttpClientHandler(string url, string contentType, string content)
         {
-            // Arrange
             var mockHttp = new MockHttpMessageHandler();
-            var exampleHtml = "<html><head><title>Example Domain</title></head><body></body></html>";
-            mockHttp.When("http://example.com").Respond("text/html", exampleHtml);
+            mockHttp.When(url).Respond(contentType, content);
 
             var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
-
-            // Act
-            var metadata = await downloader.DownloadMetadata("http://example.com");
-
-            // Assert
-            Assert.NotNull(metadata);
-            Assert.Equal("Example Domain", metadata.Title);
+            mockHttpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
+            downloader = new MetadataDownloader(mockHttpClientFactory.Object);
         }
 
-        [Fact]
-        public async Task DownloadMetadata_ShouldReturnNull_IfTitleTagIsMissing()
+        [Theory]
+        [InlineData("<html><head><title>Example Domain</title></head><body></body></html>", "Example Domain")]
+        [InlineData("<html><head></head><body></body></html>", null)]
+        [InlineData("", null)]
+        [InlineData("<html><head><title>First Title</title><title>Second Title</title></head><body></body></html>", "First Title")]
+        public async Task DownloadMetadata_ShouldHandleDifferentHtmlResponses(string htmlContent, string expectedTitle)
         {
             // Arrange
-            var mockHttp = new MockHttpMessageHandler();
-            var htmlWithoutTitle = "<html><head></head><body></body></html>";
-            mockHttp.When("http://example.com").Respond("text/html", htmlWithoutTitle);
-
-            var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
+            SetupHttpClientHandler("http://example.com", "text/html", htmlContent);
 
             // Act
             var metadata = await downloader.DownloadMetadata("http://example.com");
 
             // Assert
-            Assert.Null(metadata);
-        }
-
-        [Fact]
-        public async Task DownloadMetadata_ShouldHandleNonHtmlResponse()
-        {
-            // Arrange
-            var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://example.com").Respond("text/plain", "Non-HTML Content");
-
-            var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
-
-            // Act
-            var metadata = await downloader.DownloadMetadata("http://example.com");
-
-            // Assert
-            Assert.Null(metadata);
-        }
-
-        [Fact]
-        public async Task DownloadMetadata_ShouldReturnNull_ForEmptyHtmlContent()
-        {
-            // Arrange
-            var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("http://example.com").Respond("text/html", "");
-
-            var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
-
-            // Act
-            var metadata = await downloader.DownloadMetadata("http://example.com");
-
-            // Assert
-            Assert.Null(metadata);
-        }
-
-        [Fact]
-        public async Task DownloadMetadata_ShouldExtractFirstTitle_FromHtmlWithMultipleTitles()
-        {
-            // Arrange
-            var mockHttp = new MockHttpMessageHandler();
-            var htmlWithMultipleTitles = "<html><head><title>First Title</title><title>Second Title</title></head><body></body></html>";
-            mockHttp.When("http://example.com").Respond("text/html", htmlWithMultipleTitles);
-
-            var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
-
-            // Act
-            var metadata = await downloader.DownloadMetadata("http://example.com");
-
-            // Assert
-            Assert.NotNull(metadata);
-            Assert.Equal("First Title", metadata.Title); // Assuming it extracts the first title
+            if (expectedTitle != null)
+            {
+                Assert.NotNull(metadata);
+                Assert.Equal(expectedTitle, metadata.Title);
+            }
+            else
+            {
+                Assert.Null(metadata);
+            }
         }
 
         [Fact]
@@ -103,7 +54,8 @@ namespace FomoDog.Tests
             mockHttp.When("http://example.com").Throw(new TaskCanceledException()); // Simulating a timeout
 
             var httpClient = new HttpClient(mockHttp);
-            var downloader = new MetadataDownloader(httpClient);
+            mockHttpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
+            downloader = new MetadataDownloader(mockHttpClientFactory.Object);
 
             // Act
             var metadata = await downloader.DownloadMetadata("http://example.com");
@@ -112,4 +64,5 @@ namespace FomoDog.Tests
             Assert.Null(metadata);
         }
     }
+
 }
