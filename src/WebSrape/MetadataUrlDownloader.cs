@@ -6,6 +6,8 @@ namespace FomoDog
     {
 
         private readonly HttpClient _httpClient;
+        
+        public MetadataDownloader() { }
         public MetadataDownloader(HttpClient httpClient)
         {
             _httpClient = httpClient;

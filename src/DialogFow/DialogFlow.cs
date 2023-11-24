@@ -40,7 +40,7 @@ namespace FomoDog
 
                 using (var activity = OpenTelemetry.OpenTelemetry.Source.StartActivity("Receive message"))
                 {
-                    activity.SetTag("chatId", chatId);
+                    activity?.SetTag("chatId", chatId);
                     var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
 
                     if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
