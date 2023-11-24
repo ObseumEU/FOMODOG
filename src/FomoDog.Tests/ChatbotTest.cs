@@ -5,7 +5,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bots.Types;
 using Xunit;
+using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog.Tests
 {
@@ -140,5 +144,105 @@ namespace FomoDog.Tests
                     (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
                 Times.Once);
         }
+
+        [Fact]
+        public async Task ReceiveMessage_ShouldLogRegularTextMessage()
+        {
+            // Arrange
+            var mockGptClient = new Mock<IChatGPTClient>();
+            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
+            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
+            var mockLogger = new Mock<ILogger<DialogFlow>>();
+            var mockChatRepository = new Mock<IChatRepository>();
+            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
+            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
+
+            var dialogFlow = new DialogFlow(
+                mockChatbotOptions.Object,
+                mockGptClient.Object,
+                mockTelegramOptions.Object,
+                mockLogger.Object,
+                mockChatRepository.Object,
+                mockMetadataDownloader.Object,
+                mockTelegramBotClient.Object);
+
+            var message = new Telegram.Bot.Types.Message
+            {
+                Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
+                Text = "Hello, how are you?",
+                From = new Telegram.Bot.Types.User { Id = 67890, FirstName = "Test", LastName = "User" },
+                Date = DateTime.UtcNow
+            };
+
+            // Act
+            await dialogFlow.ReceiveMessage(message, CancellationToken.None);
+
+            // Assert
+            // Verify that the chat repository was called to add a new chat activity with the message text
+            mockChatRepository.Verify(repo => repo.AddActivity(It.Is<ChatActivity>(activity =>
+                activity.Content == "Hello, how are you?" &&
+                activity.ChatId == "12345")), Times.Once);
+        }
+
+        [Fact]
+        public async Task ReceiveMessage_ShouldLogErrorOnExceededQuotaException()
+        {
+            // Arrange
+            var mockGptClient = new Mock<IChatGPTClient>();
+            var mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
+            var mockTelegramOptions = new Mock<IOptions<TelegramOptions>>();
+            var mockLogger = new Mock<ILogger<DialogFlow>>();
+            var mockChatRepository = new Mock<IChatRepository>();
+            var mockMetadataDownloader = new Mock<IMetadataDownloader>();
+            var mockTelegramBotClient = new Mock<ITelegramBotClient>();
+
+            var options = new ChatbotOptions
+            {
+                UserPrompt = "Your user prompt here",
+                ChatDetails = "SomeChatDetails"
+            };
+            mockChatbotOptions.Setup(o => o.Value).Returns(options);
+
+            var dialogFlow = new DialogFlow(
+                mockChatbotOptions.Object,
+                mockGptClient.Object,
+                mockTelegramOptions.Object,
+                mockLogger.Object,
+                mockChatRepository.Object,
+                mockMetadataDownloader.Object,
+                mockTelegramBotClient.Object);
+
+            var message = new Telegram.Bot.Types.Message
+            {
+                Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
+                Text = "mam fomo",
+                From = new Telegram.Bot.Types.User { Id = 67890, FirstName = "Test", LastName = "User" },
+                Date = DateTime.UtcNow
+            };
+
+            mockGptClient.Setup(m => m.CallChatGpt(It.IsAny<string>()))
+                         .ThrowsAsync(new ExceededCurrentQuotaException("Quota exceeded"));
+
+            // Act
+            await dialogFlow.ReceiveMessage(message, CancellationToken.None);
+
+            // Assert
+            // Verify that the logger logs the exception
+            mockLogger.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Quota exceeded")),
+                    It.IsAny<ExceededCurrentQuotaException>(),
+                    (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                Times.Once);
+        }
+
+        public class ExceededCurrentQuotaException : Exception
+        {
+            public ExceededCurrentQuotaException(string message) : base(message) { }
+        }
     }
+
+  
 }

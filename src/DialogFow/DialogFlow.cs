@@ -1,4 +1,5 @@
 ﻿using FomoDog.Context;
+using FomoDog.Context.Models;
 using FomoDog.DialogFow;
 using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
@@ -60,9 +61,14 @@ namespace FomoDog
                             RawMessage = JsonConvert.SerializeObject(message)
                         });
                         var messages = await _chatRepository.GetAllActivity(message.Chat.Id.ToString());
+                        if (messages == null)
+                        {
+                            messages = new List<ChatActivity>();
+                        }
 
                         try
                         {
+
                             var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
                             var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
                             string response = string.Empty;
@@ -91,12 +97,16 @@ namespace FomoDog
                         {
                             //DRY? I dont care.
                             _log.LogError(ex.Message);
-                            var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
-                            // Echo received message text
-                            await _botClient.SendTextMessageAsync(
-                                chatId: chatId,
-                                text: response,
-                                cancellationToken: cancellationToken);
+                            try
+                            {
+                                var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
+                                // Echo received message text
+                                await _botClient.SendTextMessageAsync(
+                                    chatId: chatId,
+                                    text: response,
+                                    cancellationToken: cancellationToken);
+                            }
+                            catch { }
                         }
                     }
                     else
@@ -133,7 +143,7 @@ namespace FomoDog
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message);
+                _log.LogError(ex, ex.Message);
                 try
                 {
                     await _botClient.SendTextMessageAsync(
