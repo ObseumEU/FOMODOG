@@ -94,5 +94,19 @@ namespace FomoDog.Tests
             Assert.NotNull(metadata);
             Assert.Equal("First Title", metadata.Title); // Assuming it extracts the first title
         }
+
+        [Fact]
+        public async Task DownloadMetadata_ShouldHandleNetworkIssuesLikeTimeout()
+        {
+            // Arrange
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("http://example.com").Throw(new TaskCanceledException()); // Simulating a timeout
+
+            var httpClient = new HttpClient(mockHttp);
+            var downloader = new MetadataDownloader(httpClient);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<TaskCanceledException>(() => downloader.DownloadMetadata("http://example.com"));
+        }
     }
 }
