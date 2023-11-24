@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  fomodog:
+    image: ${DOCKER_REGISTRY-}fomodog 
+    labels:
+      com.microsoft.visual-studio.project-name: "FomoDog"
+    container_name: fomodog
+    mem_limit: 128M
+    mem_reservation: 128M
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+        'ASPNETCORE_ENVIRONMENT': Development'
+        'FeatureManagement:RefactoredRepository': 'false'
+        'Repository:RepositoryPath': '/data/data.txt'
+    volumes:
+      - ./appsettings.Development.json:/app/appsettings.json
+    depends_on:
+      - mongodb
+
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.81.0
+    container_name: collector
+    command: [ "--config=/etc/collector.yaml" ]
+    ports:
+      - "4318:4317" # Connection from app to grafana tempo
+    volumes:
+      - ./otel-collector-config.yml:/etc/collector.yaml:ro
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb
+    mem_limit: 1024M
+    mem_reservation: 512M
+    environment:
+      MONGO_INITDB_DATABASE: fomodog
+      MONGO_INITDB_ROOT_PASSWORD: jksdfhlaskfhjlasksadlkf
+      MONGO_INITDB_ROOT_USERNAME: fomodog
+    volumes:
+      - mongo_data:/data/db
+      - ./seed/001_users.js:/docker-entrypoint-initdb.d/001_users.js:ro
+    ports:
+      - 3434:27017  # standard MongoDB port
+
+volumes:
+  mongo_data:
