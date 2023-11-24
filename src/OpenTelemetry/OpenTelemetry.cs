@@ -16,7 +16,7 @@ namespace FomoDog.OpenTelemetry
             var openTelemetryOptions = configSection.Get<OpenTelemetryOptions>();
 
             services.Configure<OpenTelemetryOptions>(configSection);
-            var tracerProvider = Sdk.CreateTracerProviderBuilder()
+            Sdk.CreateTracerProviderBuilder()
            .AddSource("fomodog")
            .AddConsoleExporter()
             .AddOtlpExporter(options =>
