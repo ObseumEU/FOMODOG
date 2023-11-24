@@ -26,14 +26,16 @@ namespace FomoDog
         readonly IOptions<TelegramOptions> _telegramOptions;
         IChatRepository _chatRepository;
         ILogger<Chatbot> _log;
+        MetadataDownloader _metadataDownloader;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
             _gpt = gpt;
             _log = log;
             _chatRepository = chatRepository;
+            _metadataDownloader = metadataDownloader;
         }
 
         public async Task Run()
@@ -152,7 +154,7 @@ namespace FomoDog
                         {
                             foreach (var link in links)
                             {
-                                var metadata = await new MetadataDownloader().DownloadMetadata(link);
+                                var metadata = await _metadataDownloader.DownloadMetadata(link);
                                 messageText = messageText.Replace(link, $"{link} ({metadata.Description})");
                             }
                         }

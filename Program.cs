@@ -38,6 +38,9 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 return new MongoClient(mongoDbOptions.ConnectionString);
             });
 
+        services.AddScoped<HttpClient>();
+        services.AddScoped<MetadataDownloader>();
+
         services.AddScoped<IFileSystem, FileSystem>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));

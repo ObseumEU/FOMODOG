@@ -4,18 +4,29 @@ namespace FomoDog
 {
     public class MetadataDownloader
     {
+
+        private readonly HttpClient _httpClient;
+        public MetadataDownloader(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
         public async Task<Metadata> DownloadMetadata(string url)
         {
             string html = await DownloadHtml(url);
-            return ExtractMetadata(html);
+            if(string.IsNullOrEmpty(html))
+                return null;
+            var res = ExtractMetadata(html);
+            if (string.IsNullOrEmpty(res.Description) && string.IsNullOrEmpty(res.Title))
+                return null;
+            return res;
         }
 
         private async Task<string> DownloadHtml(string url)
         {
             try
             {
-                using var client = new HttpClient();
-                return await client.GetStringAsync(url);
+                return await _httpClient.GetStringAsync(url);
             }
             catch (Exception ex)
             {
