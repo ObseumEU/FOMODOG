@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using MongoDB.Driver;
+using Polly;
+using Polly.Extensions.Http;
+using Polly.Registry;
 using System.IO.Abstractions;
 using Telegram.Bot;
 
@@ -39,7 +42,8 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 return new MongoClient(mongoDbOptions.ConnectionString);
             });
 
-        services.AddScoped<HttpClient>();
+        services.AddChatGTPClient(config);
+
         services.AddScoped<IMetadataDownloader, MetadataDownloader>();
 
         services.AddScoped<IFileSystem, FileSystem>();
@@ -55,8 +59,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
             });
         services.AddScoped<DialogFlow>();
 
-        services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
-        services.AddScoped<IChatGPTClient, ChatGPTClient>();
+
     })
     .Build();
 

@@ -6,6 +6,7 @@ So, in conclusion, let me apologize:
 */
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -16,11 +17,13 @@ namespace FomoDog
     {
         ITelegramBotClient _botClient;
         IServiceProvider _provider;
+        ILogger<TelegramChatbot> _log;
 
-        public TelegramChatbot(ITelegramBotClient botClient, IServiceProvider provider)
+        public TelegramChatbot(ITelegramBotClient botClient, IServiceProvider provider, ILogger<TelegramChatbot> log)
         {
             _botClient = botClient;
             _provider = provider;
+            _log = log;
         }
 
         public async Task Run()
@@ -61,16 +64,23 @@ namespace FomoDog
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Telegram.Bot.Types.Update update, CancellationToken cancellationToken)
         {
-            if (update.Message is not { } message) // Our bot is very picky about the types of messages it accepts.
-                return;
-            // Only process text messages
-            if (message.Text is not { })
-                return;
-
-            using (var scope = _provider.CreateScope())
+            try
             {
-                var flow = scope.ServiceProvider.GetRequiredService<DialogFlow>();
-                await flow.ReceiveMessage(message, cancellationToken);
+                if (update.Message is not { } message) // Our bot is very picky about the types of messages it accepts.
+                    return;
+                // Only process text messages
+                if (message.Text is not { })
+                    return;
+
+                using (var scope = _provider.CreateScope())
+                {
+                    var flow = scope.ServiceProvider.GetRequiredService<DialogFlow>();
+                    await flow.ReceiveMessage(message, cancellationToken);
+                }
+            }
+            catch(Exception ex)
+            {
+                _log.LogError(ex, "Error HandleUpdateAsync");
             }
         }
     }

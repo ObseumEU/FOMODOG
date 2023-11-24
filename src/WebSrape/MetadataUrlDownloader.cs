@@ -5,11 +5,11 @@ namespace FomoDog
     public class MetadataDownloader : IMetadataDownloader
     {
 
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public MetadataDownloader(HttpClient httpClient)
+        public MetadataDownloader(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<Metadata> DownloadMetadata(string url)
@@ -27,7 +27,7 @@ namespace FomoDog
         {
             try
             {
-                return await _httpClient.GetStringAsync(url);
+                return await _httpClientFactory.CreateClient().GetStringAsync(url);
             }
             catch (Exception ex)
             {

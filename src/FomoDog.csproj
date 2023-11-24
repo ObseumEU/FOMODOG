@@ -27,6 +27,8 @@
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0-alpha.1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0-alpha.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.6.0-beta.3" />
+    <PackageReference Include="Polly" Version="8.2.0" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.4" />
     <PackageReference Include="System.IO.Abstractions" Version="19.2.87" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.87" />

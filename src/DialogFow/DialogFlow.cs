@@ -5,6 +5,7 @@ using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using Telegram.Bot;
 using static FomoDog.GPT.ChatGPTClient;
 
@@ -66,53 +67,34 @@ namespace FomoDog
                             messages = new List<ChatActivity>();
                         }
 
-                        try
+                        var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
+                        var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
+                        string response = string.Empty;
+                        using (OpenTelemetry.OpenTelemetry.Source.StartActivity("GPT get response"))
                         {
-
-                            var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
-                            var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
-                            string response = string.Empty;
-                            using (OpenTelemetry.OpenTelemetry.Source.StartActivity("GPT get response"))
-                            {
-                                response = await _gpt.CallChatGpt(gptPrompt);
-                            }
-                            // Echo received message text
-
-                            await _botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: response,
-                            cancellationToken: cancellationToken);
-
-
-                            await _chatRepository.AddActivity(new Context.Models.ChatActivity()
-                            {
-                                ChatId = message.Chat.Id.ToString(),
-                                Content = response,
-                                Date = message.Date,
-                                From = BOT_NAME,
-                                RawMessage = JsonConvert.SerializeObject(message)
-                            });
+                            response = await _gpt.CallChatGpt(gptPrompt);
                         }
-                        catch (Exception ex)
+                        // Echo received message text
+
+                        await _botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: response,
+                        cancellationToken: cancellationToken);
+
+
+                        await _chatRepository.AddActivity(new Context.Models.ChatActivity()
                         {
-                            //DRY? I dont care.
-                            _log.LogError(ex.Message);
-                            try
-                            {
-                                var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
-                                // Echo received message text
-                                await _botClient.SendTextMessageAsync(
-                                    chatId: chatId,
-                                    text: response,
-                                    cancellationToken: cancellationToken);
-                            }
-                            catch { }
-                        }
+                            ChatId = message.Chat.Id.ToString(),
+                            Content = response,
+                            Date = message.Date,
+                            From = BOT_NAME,
+                            RawMessage = JsonConvert.SerializeObject(message)
+                        });
                     }
                     else
                     {
                         _log.LogInformation($"Received from telegfram '{JsonConvert.SerializeObject(message)}");
-                        var links = DialogFlowHelpers.ExtractHttpsLinks(messageText);
+                        var links = ExtractHttpsLinks(messageText);
                         if (links?.Count() > 0)
                         {
                             foreach (var link in links)
@@ -144,15 +126,25 @@ namespace FomoDog
             catch (Exception ex)
             {
                 _log.LogError(ex, ex.Message);
-                try
-                {
-                    await _botClient.SendTextMessageAsync(
-                               chatId: message.Chat.Id,
-                               text: _chatbotOptions.Value.FatalError,
-                               cancellationToken: cancellationToken);
-                }
-                catch { }
+                await _botClient.SendTextMessageAsync(
+                           chatId: message.Chat.Id,
+                           text: _chatbotOptions.Value.FatalError,
+                           cancellationToken: cancellationToken);
             }
+        }
+
+        private string[] ExtractHttpsLinks(string inputText)
+        {
+            const string pattern = @"https://\S+";
+            var matches = Regex.Matches(inputText, pattern);
+            var links = new string[matches.Count];
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                links[i] = matches[i].Value;
+            }
+
+            return links;
         }
 
         string GetDateString(DateTime? date = null)
