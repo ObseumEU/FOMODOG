@@ -9,9 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using MongoDB.Driver;
-using Polly;
-using Polly.Extensions.Http;
-using Polly.Registry;
 using System.IO.Abstractions;
 using Telegram.Bot;
 

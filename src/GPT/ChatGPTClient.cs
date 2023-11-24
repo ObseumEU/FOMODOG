@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -69,7 +68,7 @@ namespace FomoDog.GPT
 
                 return documentation;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _log.LogError(ex, "Error call GPT Client");
                 throw;

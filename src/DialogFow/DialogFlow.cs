@@ -1,6 +1,5 @@
 ﻿using FomoDog.Context;
 using FomoDog.Context.Models;
-using FomoDog.DialogFow;
 using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

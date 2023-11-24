@@ -78,7 +78,7 @@ namespace FomoDog
                     await flow.ReceiveMessage(message, cancellationToken);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _log.LogError(ex, "Error HandleUpdateAsync");
             }
