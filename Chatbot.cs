@@ -24,24 +24,22 @@ namespace FomoDog
         readonly ChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         readonly IOptions<TelegramOptions> _telegramOptions;
-        readonly IChatRepositoryFactory _chatRepositoryFactory;
         IChatRepository _chatRepository;
         ILogger<Chatbot> _log;
 
-        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, IChatRepositoryFactory chatRepositoryFactory, ILogger<Chatbot> log)
+        public Chatbot(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<Chatbot> log, IChatRepository chatRepository)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
             _gpt = gpt;
-            _chatRepositoryFactory = chatRepositoryFactory;
             _log = log;
+            _chatRepository = chatRepository;
         }
 
         public async Task Run()
         {
 
             ITelegramBotClient botClient = new TelegramBotClient(_telegramOptions.Value.Key);
-            _chatRepository = await _chatRepositoryFactory.CreateRepositoryAsync();
             using CancellationTokenSource cts = new(); // So much for running forever.
 
             // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.

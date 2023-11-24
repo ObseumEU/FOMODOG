@@ -1,6 +1,5 @@
 ﻿using FomoDog;
 using FomoDog.Context;
-using FomoDog.Context.FileRepository;
 using FomoDog.Context.MongoDB;
 using FomoDog.Context.MongoDB.FomoDog.Context.MongoDB;
 using FomoDog.GPT;
@@ -32,16 +31,14 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         var mongoDbOptions = config.GetSection("MongoDBOptions").Get<MongoDBOptions>();
         services.AddSingleton<IMongoDBIndexInitializer, MongoDBIndexInitializer>();
+        services.AddScoped<IChatRepository, MongoDBRepository>();
 
         services.AddSingleton<IMongoClient>(serviceProvider =>
-        {
-            return new MongoClient(mongoDbOptions.ConnectionString);
-        });
+            {
+                return new MongoClient(mongoDbOptions.ConnectionString);
+            });
 
-        services.Configure<FileRepositoryOption>(config.GetSection("Repository"));
         services.AddScoped<IFileSystem, FileSystem>();
-
-        services.AddScoped<IChatRepositoryFactory, ChatRepositoryFactory>();
 
         services.Configure<ChatbotOptions>(config.GetSection("Chatbot"));
         services.AddScoped<Chatbot>();
