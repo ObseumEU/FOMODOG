@@ -5,11 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Bots.Types;
 using Xunit;
-using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog.Tests
 {
