@@ -3,3 +3,4 @@ coverage:
     - "src/Context/MongoDB/MongoDBIndexInitializer.cs"
     - "src/Context/MongoDB/Models/RawMessageToBsonDocument.cs"
     - "src/OpenTelemetry/*"
+    - "src/GPT/*"
