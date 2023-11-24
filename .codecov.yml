@@ -2,3 +2,4 @@ coverage:
   ignore:
     - "src/Context/MongoDB/MongoDBIndexInitializer.cs"
     - "src/Context/MongoDB/Models/RawMessageToBsonDocument.cs"
+    - "src/OpenTelemetry/*"
