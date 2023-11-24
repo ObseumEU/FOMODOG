@@ -1,8 +1,5 @@
-﻿using Xunit;
-using System.Net.Http;
-using RichardSzalay.MockHttp;
-using System.Threading.Tasks;
-using System.Text.Json;
+﻿using RichardSzalay.MockHttp;
+using Xunit;
 
 namespace FomoDog.Tests
 {
