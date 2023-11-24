@@ -72,7 +72,7 @@ namespace FomoDog.GPT
             catch(Exception ex)
             {
                 _log.LogError(ex, "Error call GPT Client");
-                throw ex;
+                throw;
             }
         }
 
