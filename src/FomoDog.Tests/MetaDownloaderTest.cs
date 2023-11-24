@@ -105,8 +105,11 @@ namespace FomoDog.Tests
             var httpClient = new HttpClient(mockHttp);
             var downloader = new MetadataDownloader(httpClient);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<TaskCanceledException>(() => downloader.DownloadMetadata("http://example.com"));
+            // Act
+            var metadata = await downloader.DownloadMetadata("http://example.com");
+
+            // Assert
+            Assert.Null(metadata);
         }
     }
 }
