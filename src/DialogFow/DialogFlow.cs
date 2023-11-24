@@ -1,4 +1,5 @@
 ﻿using FomoDog.Context;
+using FomoDog.Context.Models;
 using FomoDog.DialogFow;
 using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,15 @@ namespace FomoDog
     public class DialogFlow
     {
         const string BOT_NAME = "FOMODOG";
-        readonly ChatGPTClient _gpt;
+        readonly IChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         readonly IOptions<TelegramOptions> _telegramOptions;
         IChatRepository _chatRepository;
         ILogger<DialogFlow> _log;
-        MetadataDownloader _metadataDownloader;
+        IMetadataDownloader _metadataDownloader;
         ITelegramBotClient _botClient;
 
-        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, ChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, MetadataDownloader metadataDownloader, ITelegramBotClient botClient)
+        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
             _telegramOptions = telegramOptions;
@@ -40,7 +41,7 @@ namespace FomoDog
 
                 using (var activity = OpenTelemetry.OpenTelemetry.Source.StartActivity("Receive message"))
                 {
-                    activity.SetTag("chatId", chatId);
+                    activity?.SetTag("chatId", chatId);
                     var from = $"{message?.From?.FirstName} {message?.From?.LastName}";
 
                     if (messageText.ToLower().Contains("mam fomo") || messageText == "42" || messageText.ToLower().Contains("mám fomo"))
@@ -60,9 +61,14 @@ namespace FomoDog
                             RawMessage = JsonConvert.SerializeObject(message)
                         });
                         var messages = await _chatRepository.GetAllActivity(message.Chat.Id.ToString());
+                        if (messages == null)
+                        {
+                            messages = new List<ChatActivity>();
+                        }
 
                         try
                         {
+
                             var activitiesTexts = messages.Select(m => m.ToString()).Select(ReplaceVariables).ToList();
                             var gptPrompt = _chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", GetDateString()) + String.Join("\n", activitiesTexts);
                             string response = string.Empty;
@@ -91,12 +97,16 @@ namespace FomoDog
                         {
                             //DRY? I dont care.
                             _log.LogError(ex.Message);
-                            var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
-                            // Echo received message text
-                            await _botClient.SendTextMessageAsync(
-                                chatId: chatId,
-                                text: response,
-                                cancellationToken: cancellationToken);
+                            try
+                            {
+                                var response = await _gpt.CallChatGpt(_chatbotOptions.Value.ChatDetails.Replace("{DateTime.Now}", DateTime.Now.ToString()) + string.Join("\n", messages));
+                                // Echo received message text
+                                await _botClient.SendTextMessageAsync(
+                                    chatId: chatId,
+                                    text: response,
+                                    cancellationToken: cancellationToken);
+                            }
+                            catch { }
                         }
                     }
                     else
@@ -133,11 +143,15 @@ namespace FomoDog
             }
             catch (Exception ex)
             {
-                _log.LogError(ex.Message);
-                await _botClient.SendTextMessageAsync(
-                           chatId: message.Chat.Id,
-                           text: _chatbotOptions.Value.FatalError,
-                           cancellationToken: cancellationToken);
+                _log.LogError(ex, ex.Message);
+                try
+                {
+                    await _botClient.SendTextMessageAsync(
+                               chatId: message.Chat.Id,
+                               text: _chatbotOptions.Value.FatalError,
+                               cancellationToken: cancellationToken);
+                }
+                catch { }
             }
         }
 

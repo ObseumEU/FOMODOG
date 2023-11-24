@@ -56,7 +56,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<DialogFlow>();
 
         services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
-        services.AddScoped<ChatGPTClient>();
+        services.AddScoped<IChatGPTClient, ChatGPTClient>();
     })
     .Build();
 
