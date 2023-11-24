@@ -40,7 +40,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
             });
 
         services.AddScoped<HttpClient>();
-        services.AddScoped<MetadataDownloader>();
+        services.AddScoped<IMetadataDownloader, MetadataDownloader>();
 
         services.AddScoped<IFileSystem, FileSystem>();
 
