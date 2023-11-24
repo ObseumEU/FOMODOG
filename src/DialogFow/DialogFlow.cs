@@ -16,16 +16,14 @@ namespace FomoDog
         const string BOT_NAME = "FOMODOG";
         readonly IChatGPTClient _gpt;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
-        readonly IOptions<TelegramOptions> _telegramOptions;
         IChatRepository _chatRepository;
         ILogger<DialogFlow> _log;
         IMetadataDownloader _metadataDownloader;
         ITelegramBotClient _botClient;
 
-        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClient gpt, IOptions<TelegramOptions> telegramOptions, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
+        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClient gpt, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
-            _telegramOptions = telegramOptions;
             _gpt = gpt;
             _log = log;
             _chatRepository = chatRepository;
