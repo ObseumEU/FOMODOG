@@ -2,6 +2,6 @@
 {
     public class OpenTelemetryOptions
     {
-        public string UrlGrpc { get; set; }
+        public string UrlHttp { get; set; }
     }
 }
