@@ -26,8 +26,8 @@ namespace FomoDog.OpenTelemetry
            .AddConsoleExporter()
             .AddOtlpExporter(options =>
             {
-                options.Endpoint = new Uri(openTelemetryOptions.UrlHttp);
-                options.Protocol = OtlpExportProtocol.HttpProtobuf;
+                options.Endpoint = new Uri(openTelemetryOptions.UrlGrpc);
+                options.Protocol = OtlpExportProtocol.Grpc;
             })
            .Build();
         }
