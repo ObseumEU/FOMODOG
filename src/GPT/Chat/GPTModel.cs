@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace FomoDog
+namespace FomoDog.GPT.Chat
 {
     public class GptModel
     {

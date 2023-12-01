@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace FomoDog.GPT
+namespace FomoDog.GPT.Chat
 {
     public static class ChatGPTClientHelper
     {
-        public static IServiceCollection AddChatGTPClient(this IServiceCollection services, IConfigurationRoot config)
+        public static IServiceCollection AddChatGPTChatClient(this IServiceCollection services, IConfigurationRoot config)
         {
             var retryPolicy = HttpPolicyExtensions
                 .HandleTransientHttpError()
@@ -15,7 +15,7 @@ namespace FomoDog.GPT
             services.AddHttpClient("Gpt")
                 .AddPolicyHandler(retryPolicy);
             services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
-            services.AddScoped<IChatGPTClient, ChatGPTClient>();
+            services.AddScoped<IChatGPTClient, ChatGPTChatClient>();
             return services;
         }
     }

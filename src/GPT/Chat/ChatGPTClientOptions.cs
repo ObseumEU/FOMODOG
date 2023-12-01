@@ -1,4 +1,4 @@
-﻿namespace FomoDog.GPT
+﻿namespace FomoDog.GPT.Chat
 {
     public class ChatGPTClientOptions
     {

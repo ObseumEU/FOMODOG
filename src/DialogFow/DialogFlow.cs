@@ -1,4 +1,4 @@
-﻿using FomoDog.Context;
+using FomoDog.Context;
 using FomoDog.Context.Models;
 using FomoDog.GPT;
 using Microsoft.Extensions.Logging;
@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Telegram.Bot;
-using static FomoDog.GPT.ChatGPTClient;
 
 namespace FomoDog
 {

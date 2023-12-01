@@ -4,20 +4,16 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace FomoDog.GPT
+namespace FomoDog.GPT.Chat
 {
-    public interface IChatGPTClient
-    {
-        Task<string> CallChatGpt(string text);
-    }
 
-    public class ChatGPTClient : IChatGPTClient
+    public partial class ChatGPTChatClient : IChatGPTClient
     {
         private readonly IOptions<ChatGPTClientOptions> _options;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<ChatGPTClient> _log;
+        private readonly ILogger<ChatGPTChatClient> _log;
 
-        public ChatGPTClient(IOptions<ChatGPTClientOptions> options, IHttpClientFactory httpClientFactory, ILogger<ChatGPTClient> log)
+        public ChatGPTChatClient(IOptions<ChatGPTClientOptions> options, IHttpClientFactory httpClientFactory, ILogger<ChatGPTChatClient> log)
         {
             _options = options;
             _httpClientFactory = httpClientFactory;
@@ -73,10 +69,6 @@ namespace FomoDog.GPT
                 _log.LogError(ex, "Error call GPT Client");
                 throw;
             }
-        }
-
-        public class ExceededCurrentQuotaException : Exception
-        {
         }
     }
 }

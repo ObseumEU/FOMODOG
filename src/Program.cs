@@ -2,7 +2,7 @@
 using FomoDog.Context;
 using FomoDog.Context.MongoDB;
 using FomoDog.Context.MongoDB.FomoDog.Context.MongoDB;
-using FomoDog.GPT;
+using FomoDog.GPT.Chat;
 using FomoDog.OpenTelemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +39,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 return new MongoClient(mongoDbOptions.ConnectionString);
             });
 
-        services.AddChatGTPClient(config);
+        services.AddChatGPTChatClient(config);
 
         services.AddScoped<IMetadataDownloader, MetadataDownloader>();
 
