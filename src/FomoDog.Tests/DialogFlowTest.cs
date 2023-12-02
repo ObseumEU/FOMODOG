@@ -12,6 +12,7 @@ namespace FomoDog.Tests
     public class DialogFlowTest
     {
         private Mock<IChatGPTClient> mockGptClient;
+        private Mock<IChatGPTClientFactory> mockGptFactory;
         private Mock<IOptions<ChatbotOptions>> mockChatbotOptions;
         private Mock<IOptions<TelegramOptions>> mockTelegramOptions;
         private Mock<ILogger<DialogFlow>> mockLogger;
@@ -23,11 +24,13 @@ namespace FomoDog.Tests
         public DialogFlowTest()
         {
             mockGptClient = new Mock<IChatGPTClient>();
+            mockGptFactory = new Mock<IChatGPTClientFactory>();
             mockChatbotOptions = new Mock<IOptions<ChatbotOptions>>();
             mockLogger = new Mock<ILogger<DialogFlow>>();
             mockChatRepository = new Mock<IChatRepository>();
             mockMetadataDownloader = new Mock<IMetadataDownloader>();
             mockTelegramBotClient = new Mock<ITelegramBotClient>();
+            mockGptFactory.Setup(m => m.CreateClientAsync()).Returns(Task.FromResult(mockGptClient.Object));
 
             // Arrange
             var options = new ChatbotOptions
@@ -41,12 +44,11 @@ namespace FomoDog.Tests
 
             dialogFlow = new DialogFlow(
                 mockChatbotOptions.Object,
-                mockGptClient.Object,
+                mockGptFactory.Object,
                 mockLogger.Object,
                 mockChatRepository.Object,
                 mockMetadataDownloader.Object,
                 mockTelegramBotClient.Object);
-
         }
 
         [Fact]

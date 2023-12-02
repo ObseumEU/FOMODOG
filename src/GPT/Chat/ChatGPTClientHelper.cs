@@ -15,7 +15,8 @@ namespace FomoDog.GPT.Chat
             services.AddHttpClient("Gpt")
                 .AddPolicyHandler(retryPolicy);
             services.Configure<ChatGPTClientOptions>(config.GetSection("ChatGPT"));
-            services.AddScoped<IChatGPTClient, ChatGPTChatClient>();
+            services.AddScoped<ChatGPTChatClient>();
+            services.AddScoped<IChatGPTClientFactory, ChatGPTClientFactory>();
             return services;
         }
     }

@@ -12,17 +12,17 @@ namespace FomoDog
     public class DialogFlow : IDialogFlow
     {
         const string BOT_NAME = "FOMODOG";
-        readonly IChatGPTClient _gpt;
+        readonly IChatGPTClientFactory _gptFactory;
         readonly IOptions<ChatbotOptions> _chatbotOptions;
         IChatRepository _chatRepository;
         ILogger<DialogFlow> _log;
         IMetadataDownloader _metadataDownloader;
         ITelegramBotClient _botClient;
 
-        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClient gpt, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
+        public DialogFlow(IOptions<ChatbotOptions> chatbotOptions, IChatGPTClientFactory gptFactory, ILogger<DialogFlow> log, IChatRepository chatRepository, IMetadataDownloader metadataDownloader, ITelegramBotClient botClient)
         {
             _chatbotOptions = chatbotOptions;
-            _gpt = gpt;
+            _gptFactory = gptFactory;
             _log = log;
             _chatRepository = chatRepository;
             _metadataDownloader = metadataDownloader;
@@ -68,7 +68,8 @@ namespace FomoDog
                         string response = string.Empty;
                         using (OpenTelemetry.OpenTelemetry.Source.StartActivity("GPT get response"))
                         {
-                            response = await _gpt.CallChatGpt(gptPrompt);
+                            var gptClient = await _gptFactory.CreateClientAsync();
+                            response = await gptClient.CallChatGpt(gptPrompt);
                         }
                         // Echo received message text
 
