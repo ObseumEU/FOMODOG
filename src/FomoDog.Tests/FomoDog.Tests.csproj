@@ -19,7 +19,7 @@
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="19.2.87" />
     <PackageReference Include="xunit" Version="2.6.3" />
-	<PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.87" />
+	<PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.91" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
