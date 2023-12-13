@@ -31,7 +31,7 @@
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.4" />
     <PackageReference Include="System.IO.Abstractions" Version="19.2.87" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="19.2.87" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.4" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     <PackageReference Include="Telegram.Bots" Version="5.9.0" />
 	<PackageReference Include="Microsoft.FeatureManagement" Version="3.1.0" />
