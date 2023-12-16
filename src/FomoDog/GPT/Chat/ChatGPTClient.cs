@@ -6,7 +6,6 @@ using System.Text;
 
 namespace FomoDog.GPT.Chat
 {
-
     public partial class ChatGPTChatClient : IChatGPTClient
     {
         private readonly IOptions<ChatGPTClientOptions> _options;

@@ -1,4 +1,5 @@
 ﻿using FomoDog.GPT.Chat;
+using FomoDog.GPT.ChatGPTService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 
@@ -26,11 +27,14 @@ namespace FomoDog.GPT
             {
                 throw new NotImplementedException();
             }
+            else if(await _featureManager.IsEnabledAsync(FeatureFlags.MICROSERVICE_CHATGPT))
+            {
+                return _serviceProvider.GetRequiredService<ChatGPTServiceClient>();
+            }
             else
             {
                 return _serviceProvider.GetRequiredService<ChatGPTChatClient>();
             }
         }
     }
-
 }

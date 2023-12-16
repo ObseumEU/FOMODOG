@@ -3,12 +3,16 @@ using FomoDog.Context;
 using FomoDog.Context.MongoDB;
 using FomoDog.Context.MongoDB.FomoDog.Context.MongoDB;
 using FomoDog.GPT.Chat;
+using FomoDog.GPT.ChatGPTService;
 using FomoDog.OpenTelemetry;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using MongoDB.Driver;
+using Polly;
+using Polly.Extensions.Http;
 using System.IO.Abstractions;
 using Telegram.Bot;
 
@@ -28,6 +32,32 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddFeatureManagement(config);
 
+        var featureManager = services.BuildServiceProvider().GetService<IFeatureManagerSnapshot>();
+        bool isChatGPTServiceEnabled = featureManager.IsEnabledAsync(FeatureFlags.MICROSERVICE_CHATGPT).GetAwaiter().GetResult();
+
+        if (isChatGPTServiceEnabled)
+        {
+            services.AddHttpClient();
+            services.AddChatGPTService(config);
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("localhost", "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+        }
+        else
+        {
+            services.AddChatGPTChatClient(config);
+        }
+
         services.Configure<MongoDBOptions>(config.GetSection("MongoDBOptions"));
 
         var mongoDbOptions = config.GetSection("MongoDBOptions").Get<MongoDBOptions>();
@@ -38,8 +68,6 @@ using IHost host = Host.CreateDefaultBuilder(args)
             {
                 return new MongoClient(mongoDbOptions.ConnectionString);
             });
-
-        services.AddChatGPTChatClient(config);
 
         services.AddScoped<IMetadataDownloader, MetadataDownloader>();
 
