@@ -12,9 +12,9 @@ namespace FomoDog.GPT.ChatGPTService
 
         public async Task<string> CallChatGpt(string text)
         {
-            var response = await _client.GetResponse<MessageTypes.GPT.ChatGPTCompletion>(new MessageTypes.GPT.GetChatGPTCompletion() 
-            { 
-                Text = text 
+            var response = await _client.GetResponse<MessageTypes.GPT.ChatGPTCompletion>(new MessageTypes.GPT.GetChatGPTCompletion()
+            {
+                Text = text
             });
             return response.Message.Text;
         }
