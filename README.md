@@ -6,6 +6,10 @@
 [![codecov](https://codecov.io/github/BooAIPublic/FOMODOG/graph/badge.svg?token=d6PRERlhdo)](https://codecov.io/github/BooAIPublic/FOMODOG)
 [![CodeQL](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql)
 
+[![ChatGPT-service](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-chatgpt.yml/badge.svg)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-chatgpt.yml)
+[![FomoDog-service](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-fomodog.yml/badge.svg)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-fomodog.yml)
+
+
 # Patreons
 Daniel Brvnišťan, David Roško
 
