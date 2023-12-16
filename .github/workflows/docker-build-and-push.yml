@@ -17,7 +17,7 @@ jobs:
     uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
     with:
       image: "smixers/fomodog"
-      dockerfile: ./src/Dockerfile
+      dockerfile: ./src/FomoDog/Dockerfile
       context: ./src/
       tests: true
     secrets:
