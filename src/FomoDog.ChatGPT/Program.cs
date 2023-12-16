@@ -11,8 +11,6 @@ Sdk.CreateTracerProviderBuilder()
     .AddConsoleExporter()
     .Build();
 
-CreateHostBuilder(args).Build().Run();
-
 void ConfigureResource(ResourceBuilder r)
 {
     r.AddService("Service Name",
@@ -20,9 +18,15 @@ void ConfigureResource(ResourceBuilder r)
         serviceInstanceId: Environment.MachineName);
 }
 
+IHostEnvironment env = Host.CreateDefaultBuilder(args).Build().Services.GetRequiredService<IHostEnvironment>();
+var config = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, true)
+    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, true)
+    .AddEnvironmentVariables()
+    .Build();
 
-IHostBuilder CreateHostBuilder(string[] args) =>
- Host.CreateDefaultBuilder(args)
+Host.CreateDefaultBuilder(args)
      .ConfigureServices((hostContext, services) =>
      {
          services.AddMassTransit(x =>
@@ -40,5 +44,9 @@ IHostBuilder CreateHostBuilder(string[] args) =>
              });
          });
 
-     });
+         services.AddChatGPTChatClient(config);
+
+     })
+     .Build()
+     .Run(); ;
 

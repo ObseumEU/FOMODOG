@@ -5,21 +5,23 @@ namespace FomoDog.ChatGPT
     public class MessageConsumer : IConsumer<MessageTypes.GPT.GetChatGPTCompletion>
     {
         readonly ILogger<MessageConsumer> _logger;
+        readonly IChatGPTClientFactory _chatGPTClientFactory;
 
-        public MessageConsumer(ILogger<MessageConsumer> logger)
+        public MessageConsumer(ILogger<MessageConsumer> logger, IChatGPTClientFactory chatGPTClientFactory)
         {
             _logger = logger;
+            _chatGPTClientFactory = chatGPTClientFactory;
         }
 
-        public Task Consume(ConsumeContext<MessageTypes.GPT.GetChatGPTCompletion> context)
+        public async Task Consume(ConsumeContext<MessageTypes.GPT.GetChatGPTCompletion> context)
         {
-            _logger.LogInformation("Received Text: {Text}", context.Message.Text);
+            var client = await _chatGPTClientFactory.CreateClientAsync();
+            var result = await client.CallChatGpt(context.Message.Text);
             var message = new MessageTypes.GPT.ChatGPTCompletion()
             {
-                Text = "TODO GPT response text"
+                Text = result
             };
-            context.Respond(message);
-            return Task.CompletedTask;
+            await context.RespondAsync(message);
         }
     }
 }
