@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FomoDog.ChatGPT\FomoDog.ChatGPT.csproj" />
     <ProjectReference Include="..\FomoDog.MessageTypes\FomoDog.MessageTypes.csproj" />
   </ItemGroup>
 

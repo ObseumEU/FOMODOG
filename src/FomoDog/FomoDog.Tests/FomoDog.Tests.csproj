@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FomoDog.csproj" />
-    <ProjectReference Include="..\FomoDog\FomoDog.csproj" />
   </ItemGroup>
 
 </Project>
