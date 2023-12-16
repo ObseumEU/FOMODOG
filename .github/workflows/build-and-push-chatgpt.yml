@@ -1,4 +1,4 @@
-name: continuous-integration
+name: ChatGPT-service
 on:
   push:
     branches:
