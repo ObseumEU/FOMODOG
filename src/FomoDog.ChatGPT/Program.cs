@@ -1,8 +1,8 @@
-using MassTransit;
 using FomoDog.ChatGPT;
+using MassTransit;
 using MassTransit.Logging;
-using OpenTelemetry.Resources;
 using OpenTelemetry;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 Sdk.CreateTracerProviderBuilder()
