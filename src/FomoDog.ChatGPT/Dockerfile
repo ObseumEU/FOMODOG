@@ -16,6 +16,11 @@ RUN dotnet restore "FomoDog.MessageTypes/FomoDog.MessageTypes.csproj"
 
 COPY . .
 
+ARG RUN_TESTS
+RUN if [ "$RUN_TESTS" = "true" ]; then \
+      dotnet test "FomoDog.ChatGPT/FomoDog.ChatGPT.Tests/FomoDog.ChatGPT.Tests.csproj" --collect:"XPlat Code Coverage" --results-directory:"/app/coverage/"; \
+    fi
+
 # Build the projects
 RUN dotnet build "FomoDog.ChatGPT/FomoDog.ChatGPT.csproj" -c Release -o /app/build
 RUN dotnet build "FomoDog.MessageTypes/FomoDog.MessageTypes.csproj" -c Release -o /app/build
@@ -29,4 +34,5 @@ RUN dotnet publish "FomoDog.MessageTypes/FomoDog.MessageTypes.csproj" -c Release
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /app/coverage ./coverage
 ENTRYPOINT ["dotnet", "FomoDog.ChatGPT.dll"]

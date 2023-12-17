@@ -50,6 +50,11 @@ namespace FomoDog.ChatGPT
                 var response = await client.PostAsync(_options.Value.ApiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
                 var jsonResponse = await response.Content.ReadAsStringAsync();
 
+                if(!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"{response.StatusCode} {response.Content}");
+                }
+
                 Console.WriteLine(jsonResponse);
 
                 var responseObject = JsonConvert.DeserializeObject<Response>(jsonResponse);
@@ -58,7 +63,7 @@ namespace FomoDog.ChatGPT
                 {
                     throw new ExceededCurrentQuotaException();
                 }
-                var documentation = responseObject.Choices[0].ResponseMessage.Content.ToString();
+                var documentation = responseObject?.Choices[0]?.ResponseMessage?.Content?.ToString();
 
                 return documentation;
             }

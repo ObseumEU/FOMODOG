@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FomoDog.ChatGPT", "FomoDog.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FomoDog.Tests", "FomoDog\FomoDog.Tests\FomoDog.Tests.csproj", "{63B9C71E-F36E-4724-8C8F-E6A10EB107CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FomoDog.ChatGPT.Tests", "FomoDog.ChatGPT\FomoDog.ChatGPT.Tests\FomoDog.ChatGPT.Tests.csproj", "{91C02DED-9848-4C32-923D-BBB13213FD32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{63B9C71E-F36E-4724-8C8F-E6A10EB107CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63B9C71E-F36E-4724-8C8F-E6A10EB107CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63B9C71E-F36E-4724-8C8F-E6A10EB107CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91C02DED-9848-4C32-923D-BBB13213FD32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91C02DED-9848-4C32-923D-BBB13213FD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91C02DED-9848-4C32-923D-BBB13213FD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91C02DED-9848-4C32-923D-BBB13213FD32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

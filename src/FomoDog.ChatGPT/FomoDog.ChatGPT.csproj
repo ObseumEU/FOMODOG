@@ -9,6 +9,12 @@
     <DockerfileContext>..\src</DockerfileContext>
   </PropertyGroup>
 
+	<ItemGroup>
+		<Compile Remove="FomoDog.ChatGPT.Tests\**" />
+		<EmbeddedResource Remove="FomoDog.ChatGPT.Tests\**" />
+		<None Remove="FomoDog.ChatGPT.Tests\**" />
+	</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="8.1.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.2" />
