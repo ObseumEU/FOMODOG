@@ -2,7 +2,6 @@
 using FomoDog.Context;
 using FomoDog.Context.MongoDB;
 using FomoDog.Context.MongoDB.FomoDog.Context.MongoDB;
-using FomoDog.GPT.Chat;
 using FomoDog.GPT.ChatGPTService;
 using FomoDog.OpenTelemetry;
 using MassTransit;
@@ -33,8 +32,6 @@ using IHost host = Host.CreateDefaultBuilder(args)
         var featureManager = services.BuildServiceProvider().GetService<IFeatureManagerSnapshot>();
         bool isChatGPTServiceEnabled = featureManager.IsEnabledAsync(FeatureFlags.MICROSERVICE_CHATGPT).GetAwaiter().GetResult();
 
-        if (isChatGPTServiceEnabled)
-        {
             services.AddHttpClient();
             services.AddChatGPTService(config);
             services.AddMassTransit(x =>
@@ -51,11 +48,6 @@ using IHost host = Host.CreateDefaultBuilder(args)
                     cfg.ConfigureEndpoints(context);
                 });
             });
-        }
-        else
-        {
-            services.AddChatGPTChatClient(config);
-        }
 
         services.Configure<MongoDBOptions>(config.GetSection("MongoDBOptions"));
 
