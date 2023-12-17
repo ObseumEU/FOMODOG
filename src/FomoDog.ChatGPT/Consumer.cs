@@ -4,12 +4,10 @@ namespace FomoDog.ChatGPT
 {
     public class MessageConsumer : IConsumer<MessageTypes.GPT.GetChatGPTCompletion>
     {
-        readonly ILogger<MessageConsumer> _logger;
         readonly IChatGPTClientFactory _chatGPTClientFactory;
 
-        public MessageConsumer(ILogger<MessageConsumer> logger, IChatGPTClientFactory chatGPTClientFactory)
+        public MessageConsumer(IChatGPTClientFactory chatGPTClientFactory)
         {
-            _logger = logger;
             _chatGPTClientFactory = chatGPTClientFactory;
         }
 
