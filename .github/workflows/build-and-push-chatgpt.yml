@@ -49,4 +49,4 @@ jobs:
           with:
             directory: ./coverage/
             flags: ChatGPT-service
-            
+            name: ${{ github.workflow }}-${{ github.run_number }}-ChatGPT
