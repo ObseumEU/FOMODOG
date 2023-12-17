@@ -19,6 +19,7 @@ namespace FomoDog.OpenTelemetry
                 serviceInstanceId: Environment.MachineName);
         }
 
+        // Extension method for IServiceCollection to setup OpenTelemetry
         public static void AddConsoleOpenTelemetry(this IServiceCollection services, IConfigurationSection configSection)
         {
             var openTelemetryOptions = configSection.Get<OpenTelemetryOptions>();
@@ -36,8 +37,6 @@ namespace FomoDog.OpenTelemetry
                     options.Protocol = OtlpExportProtocol.Grpc;
                 })
                .Build();
-
-
         }
     }
 }
