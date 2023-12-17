@@ -11,7 +11,7 @@ namespace FomoDog.OpenTelemetry
 {
     public static class OpenTelemetry
     {
-        public static readonly ActivitySource Source = new("fomodog");
+        public static readonly ActivitySource Source = new(nameof(FomoDog));
 
         static void ConfigureResource(ResourceBuilder r)
         {
