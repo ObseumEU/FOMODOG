@@ -29,4 +29,4 @@ RUN dotnet publish "FomoDog.MessageTypes/FomoDog.MessageTypes.csproj" -c Release
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "FomoDog.dll"]
+ENTRYPOINT ["dotnet", "FomoDog.ChatGPT.dll"]
