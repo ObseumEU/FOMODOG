@@ -1,5 +1,4 @@
 name: ChatGPT-service
-
 on:
   push:
     branches:
@@ -9,42 +8,45 @@ on:
       - 'src/FomoDog.MessageTypes/**'
 
 jobs:
-  checkout-and-build:
+  checkout:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           submodules: recursive
           token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Build and Push Docker image
-        uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
-        with:
-          image: "smixers/fomodog.chatgpt"
-          dockerfile: ./src/FomoDog.ChatGPT/Dockerfile
-          context: ./src/
-          tests: true
-        secrets:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+  docker:
+    uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
+    with:
+      image: "smixers/fomodog.chatgpt"
+      dockerfile: ./src/FomoDog.ChatGPT/Dockerfile
+      context: ./src/
+      tests: true
+    secrets:
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
 
   extract-coverage:
-    runs-on: ubuntu-latest
-    needs: checkout-and-build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # Make sure to run on the same type of runner as the previous job to avoid any compatibility issues.
+      runs-on: ubuntu-latest
+      # This job needs to run after the 'docker' job
+      needs: docker
+      steps:
+        # This step is necessary to interact with Docker layers
+        - name: Checkout repository
+          uses: actions/checkout@v4
 
-      - name: Extract coverage reports
-        run: |
-          docker create --name temp-container smixers/fomodog.chatgpt:latest
-          docker cp temp-container:/app/coverage/ coverage/
-          docker rm temp-container
+        - name: Extract coverage reports
+          run: |
+            docker create --name temp-container smixers/fomodog.chatgpt:latest
+            docker cp temp-container:/app/coverage/ coverage/
+            docker rm temp-container
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          directory: ./coverage/
-          flags: ChatGPT-service
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v3
+          with:
+            directory: ./coverage/
+            flags: ChatGPT-service
+            
