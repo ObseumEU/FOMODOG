@@ -13,8 +13,7 @@ Sdk.CreateTracerProviderBuilder()
 
 void ConfigureResource(ResourceBuilder r)
 {
-    r.AddService("Service Name",
-        serviceVersion: "Version",
+    r.AddService("Fomodog.ChatGPT",
         serviceInstanceId: Environment.MachineName);
 }
 
