@@ -2,14 +2,11 @@ using FomoDog.ChatGPT;
 using MassTransit;
 using MassTransit.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-Sdk.CreateTracerProviderBuilder()
-    .ConfigureResource(ConfigureResource)
-    .AddSource(DiagnosticHeaders.DefaultListenerName)
-    .AddConsoleExporter()
-    .Build();
+
 
 void ConfigureResource(ResourceBuilder r)
 {
@@ -23,6 +20,19 @@ var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, true)
     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, true)
     .AddEnvironmentVariables()
+    .Build();
+
+
+var openTelemetryOptions = config.GetSection("OpenTelemetryOptions").Get<OpenTelemetryOptions>();
+Sdk.CreateTracerProviderBuilder()
+    .ConfigureResource(ConfigureResource)
+    .AddSource(DiagnosticHeaders.DefaultListenerName)
+    .AddConsoleExporter()
+    .AddOtlpExporter(options =>
+    {
+        options.Endpoint = new Uri(openTelemetryOptions.UrlGrpc);
+        options.Protocol = OtlpExportProtocol.Grpc;
+    })
     .Build();
 
 Host.CreateDefaultBuilder(args)

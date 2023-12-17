@@ -1,4 +1,5 @@
 ﻿using MassTransit.Logging;
+using MassTransit.Monitoring;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
