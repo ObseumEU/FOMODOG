@@ -15,8 +15,7 @@ namespace FomoDog.OpenTelemetry
 
         static void ConfigureResource(ResourceBuilder r)
         {
-            r.AddService("Service Name",
-                serviceVersion: "Version",
+            r.AddService(nameof(FomoDog),
                 serviceInstanceId: Environment.MachineName);
         }
 
