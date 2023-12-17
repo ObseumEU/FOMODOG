@@ -7,8 +7,6 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
 using FluentAssertions;
-using FomoDog.ChatGPT;
-using Moq.Language.Flow;
 
 namespace FomoDog.ChatGPT.Tests
 {
@@ -89,8 +87,6 @@ namespace FomoDog.ChatGPT.Tests
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _client.CallChatGpt("Hello, GPT!"));
         }
-
-        // Additional tests like handling exceeded quota exception can be added here.
     }
 }
 
