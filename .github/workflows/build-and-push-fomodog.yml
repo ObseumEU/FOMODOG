@@ -49,4 +49,4 @@ jobs:
           with:
             directory: ./coverage/
             flags: FomoDog-service
-            name: ${{ github.workflow }}-${{ github.run_number }}-ChatGPT
+            name: ${{ github.workflow }}-${{ github.run_number }}-Fomodog
