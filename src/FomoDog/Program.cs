@@ -41,10 +41,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", h =>
+                    var rabbitMQConfig = context.GetRequiredService<IConfiguration>().GetSection("RabbitMQ");
+                    cfg.Host(rabbitMQConfig["Host"], rabbitMQConfig["VirtualHost"], h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMQConfig["Username"]);
+                        h.Password(rabbitMQConfig["Password"]);
                     });
 
                     cfg.ConfigureEndpoints(context);
