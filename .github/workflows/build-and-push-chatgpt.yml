@@ -40,7 +40,7 @@ jobs:
 
         - name: Extract coverage reports
           run: |
-            docker create --name temp-container smixers/fomodog:latest
+            docker create --name temp-container smixers/fomodog.chatgpt:latest
             docker cp temp-container:/app/coverage/ coverage/
             docker rm temp-container
 
