@@ -30,7 +30,6 @@ namespace FomoDog.OpenTelemetry
                 .ConfigureResource(ConfigureResource)
                 .AddSource(DiagnosticHeaders.DefaultListenerName)
                .AddHttpClientInstrumentation()
-               .AddConsoleExporter()
                 .AddOtlpExporter(options =>
                 {
                     options.Endpoint = new Uri(openTelemetryOptions.UrlGrpc);
