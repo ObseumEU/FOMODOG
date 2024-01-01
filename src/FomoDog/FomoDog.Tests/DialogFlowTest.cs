@@ -177,6 +177,36 @@ namespace FomoDog.Tests
                 Times.Once);
         }
 
+        [Fact]
+        public async Task ReceiveMessage_ShouldHandleNullMetadataGracefully()
+        {
+            // Arrange
+            var message = new Telegram.Bot.Types.Message
+            {
+                Chat = new Telegram.Bot.Types.Chat { Id = 12345 },
+                Text = "Check out this mysterious link: https://unknownlink.com",
+                From = new Telegram.Bot.Types.User { Id = 67890, FirstName = "Test", LastName = "User" },
+                Date = DateTime.UtcNow
+            };
+
+            // Setup IMetadataDownloader to return null for the given URL
+            mockMetadataDownloader.Setup(m => m.DownloadMetadata("https://unknownlink.com"))
+                                  .ReturnsAsync((Metadata)null);
+
+            // Act
+            await dialogFlow.ReceiveMessage(message, CancellationToken.None);
+
+            // Assert
+            // Verify that metadata download was attempted
+            mockMetadataDownloader.Verify(m => m.DownloadMetadata("https://unknownlink.com"), Times.Once);
+
+            // Verify that the chat repository was called to add a new chat activity 
+            // even when the metadata is null, ensure the link is still part of the content
+            mockChatRepository.Verify(repo => repo.AddActivity(It.Is<ChatActivity>(activity =>
+                activity.Content.Contains("https://unknownlink.com") &&
+                activity.ChatId == "12345")), Times.Once);
+        }
+
         public class ExceededCurrentQuotaException : Exception
         {
             public ExceededCurrentQuotaException(string message) : base(message) { }
