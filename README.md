@@ -2,7 +2,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c5c679d85bf84f05bee46dad020c25b1)](https://app.codacy.com/gh/BooAIPublic/FOMODOG/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/smixers/fomodog.svg)](https://hub.docker.com/r/smixers/fomodog)
-[![codecov](https://codecov.io/github/BooAIPublic/FOMODOG/graph/badge.svg?token=d6PRERlhdo)](https://codecov.io/github/BooAIPublic/FOMODOG)
+[![codecov](https://codecov.io/github/ObseumEU/FOMODOG/graph/badge.svg?token=d6PRERlhdo)](https://codecov.io/github/ObseumEU/FOMODOG)
 [![CodeQL](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/github-code-scanning/codeql)
 
 [![ChatGPT-service](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-chatgpt.yml/badge.svg)](https://github.com/BooAIPublic/FOMODOG/actions/workflows/build-and-push-chatgpt.yml)
