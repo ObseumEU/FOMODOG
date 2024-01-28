@@ -2,5 +2,23 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base"
+  ],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "minor": {
+    "automerge": false
+  },
+  "patch": {
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "updateTypes": ["minor"],
+      "automerge": true,
+      "matchUpdateTypes": ["minor"],
+      "matchConfidenceLevel": "high"
+    }
   ]
 }
