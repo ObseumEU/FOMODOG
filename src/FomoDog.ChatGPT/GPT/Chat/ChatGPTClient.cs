@@ -34,6 +34,7 @@ namespace FomoDog.ChatGPT
                 }
             };
 
+
                 var requestBody = new GptModel
                 {
                     MaxTokens = _options.Value.MaxTokens,
@@ -46,6 +47,7 @@ namespace FomoDog.ChatGPT
                 };
 
                 var jsonRequest = JsonConvert.SerializeObject(requestBody);
+                _log.LogInformation("Call chatgpt with body: {jsonRequest}", jsonRequest);
 
                 var response = await client.PostAsync(_options.Value.ApiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
                 var jsonResponse = await response.Content.ReadAsStringAsync();
