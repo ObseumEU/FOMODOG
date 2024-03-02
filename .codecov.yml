@@ -1,7 +1,7 @@
 coverage:
   ignore:
     - "src/Fomodog/Context/MongoDB/MongoDBIndexInitializer.cs"
-    - "src/Fomodog//Context/MongoDB/Models/RawMessageToBsonDocument.cs"
-    - "src/Fomodog//OpenTelemetry/*"
-    - "src/Fomodog//GPT/*"
-    - "src/Fomodog//Program.cs"
+    - "src/Fomodog/Context/MongoDB/Models/RawMessageToBsonDocument.cs"
+    - "src/Fomodog/OpenTelemetry/*"
+    - "src/Fomodog/GPT/*"
+    - "src/Fomodog/Program.cs"
