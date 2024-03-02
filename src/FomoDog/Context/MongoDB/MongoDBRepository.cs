@@ -11,6 +11,7 @@ namespace FomoDog.Context.MongoDB
     {
         private readonly ActivityMapper _mapper;
         private readonly IMongoCollection<Activity> _activities;
+        private readonly IOptions<MongoDBOptions> _options;
 
         // Constructor now takes a MongoClient and a database name. These can be mocked for testing.
         public MongoDBRepository(IMongoClient mongoClient, IOptions<MongoDBOptions> options)
@@ -23,6 +24,7 @@ namespace FomoDog.Context.MongoDB
             _mapper = new ActivityMapper();
             var database = mongoClient.GetDatabase(options.Value.Database);
             _activities = database.GetCollection<Activity>("activities");
+            _options = options;
         }
 
         public async Task AddActivity(ChatActivity activity)
@@ -40,7 +42,7 @@ namespace FomoDog.Context.MongoDB
             // Executing the query
             var activities = await _activities.Find(filter)
                                        .Sort(sort)
-                                       .Limit(50) // take only the latest 50
+                                       .Limit(_options.Value.MaxMessagesStoreCount)
                                        .ToListAsync();
 
             // Mapping the data
