@@ -12,13 +12,5 @@
   },
   "patch": {
     "automerge": true
-  },
-  "packageRules": [
-    {
-      "updateTypes": ["minor"],
-      "automerge": true,
-      "matchUpdateTypes": ["minor"],
-      "matchConfidenceLevel": "high"
-    }
-  ]
+  }
 }
