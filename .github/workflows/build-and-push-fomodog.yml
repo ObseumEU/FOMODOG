@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
 
   docker:
-    uses: BooAIPublic/github-workflows/.github/workflows/build-and-push.yml@master
+    uses: ObseumEU/github-workflows/.github/workflows/build-and-push.yml@master
     with:
       image: "smixers/fomodog"
       dockerfile: ./src/FomoDog/Dockerfile
